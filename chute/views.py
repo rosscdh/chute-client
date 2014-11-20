@@ -5,12 +5,11 @@ Views to provide api endpoints that:
 1. PATCH /api/config/update/ {"url": "/url/to/find/new/config.py"} - passed to a service that connects and downloads the new values
 2. POST|PATCH|DELETE /api/media/(:uuid/)? {Media dict} - passes new media elements to be appended to the playlist after downloading required videos
 """
-from flask import Blueprint, request, url_for, Response
+from flask import Blueprint, request, render_template, url_for, Response
 
 from flask.ext import restful
 from flask.ext.rq import get_queue
 from flask.ext.classy import FlaskView
-from flask.ext.restful import reqparse
 
 
 from .tasks import download_video
@@ -26,11 +25,14 @@ from .tasks import download_video
 
 
 class IndexView(FlaskView):
-    def index(self):
-        return "<br>".join(['yay','ysy'])
+    def get(self):
+        return render_template('player.html')
 
 
-class DownloadMedia(restful.Resource):
+base_blueprint = Blueprint('base', __name__, template_folder='templates')
+
+
+class DownloadMediaEndpoint(restful.Resource):
     def post(self):
         data = request.json
 
@@ -45,8 +47,7 @@ class DownloadMedia(restful.Resource):
         }, 202
 
 
-blueprint = Blueprint('api', __name__, template_folder='templates')
+blueprint = Blueprint('api', __name__)
 api = restful.Api(blueprint, prefix='/api')
+api.add_resource(DownloadMediaEndpoint, '/download')
 
-
-api.add_resource(DownloadMedia, '/download')

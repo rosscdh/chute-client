@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title/>
+
+    {% assets output="css/bootstrap.min.css", "css/clean-blog.css" %}
+        <link href="{{ ASSET_URL }}" rel="stylesheet" />
+    {% endassets %}
+
+</head>
+
+<body>
+    <!-- Main Content Page -->
+    <div id="content"></div>
+
+    <!-- Page Templates -->
+    <script id="tpl-layout-image_left" type="text/x-handlebars-template">
+    
+    <header class="intro-header" style="background-image: url('{{ object.picture }}');">
+        <div class="container">
+            <div class="row">
+                &nbsp;
+            </div>
+        </div>
+    
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+            <div class="post-heading">
+                <h1 data-name="name" contenteditable="true">{{ object.name }}</h1>
+                <h2 class="subheading" data-name="message" contenteditable="true">{{ object.message }}</h2>
+            </div>
+        </div>
+    </header>
+
+    
+    <article>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 editable" data-name="description" contenteditable="true">
+                    {{ object.description }}
+                </div>
+            </div>
+        </div>
+    </article>
+    </script>
+
+
+    <hr>
+
+    <!-- jQuery -->
+    {% assets filters="jsmin", output="js/chute.jquery.js",
+              "js/handlebars.min.js", "js/hasher.min.js", "js/jquery.min.js",
+              "js/jquery-ui.min.js", "js/js-signals.js", "js/bootstrap.min.js",
+              "js/clean-blog.min.js" %}
+        <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+    {% endassets %}
+
+    <script>
+    'use strict';
+    $(document).ready(function( ) {
+
+        var basic_template = $("script#tpl-layout-basic").html();
+
+        $( "body" ).chute_controller({
+            'feed': {{ view.feed_json|safe }},
+            'project': {{ view.project_json|safe }},
+            'templates': {
+                'basic': basic_template,
+                'image': basic_template,
+                'image_left': basic_template,
+            },
+        });
+        window.chute = $( "body" ).data( 'chute-chute_controller' );
+
+        //handle hash changes
+        function handleChanges(newHash, oldHash){
+            if ( newHash !== NaN && newHash !== '' ) {
+                var pk = parseInt( newHash );
+                window.chute.goto( pk );
+            }
+        }
+
+        hasher.changed.add(handleChanges); //add hash change listener
+        hasher.initialized.add(handleChanges); //add initialized listener (to grab initial value in case it is already set)
+        hasher.init(); //initialize hasher (start listening for history changes)
+
+    });
+    </script>
+</body>
+
+</html>

@@ -6,3 +6,4 @@ flask-restful  # not flask-api its fiddley and function based
 Flask-Script  # scripting
 Flask-Uploads
 Flask-WTF
+Flask-Assets

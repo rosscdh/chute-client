@@ -2,16 +2,16 @@
 import os
 import sys
 
-from flask import Flask, render_template
 from flask.ext.rq import RQ
+from flask import Flask, render_template
+from flask.ext.assets import Environment
 
+from chute.views import base_blueprint
 from chute.views import blueprint as api_blueprint
 from chute.views import IndexView
 
 app = Flask(__name__)
 app.config.from_object('config')
-
-#db = SQLAlchemy(app)
 
 ########################
 # Configure Secret Key #
@@ -43,10 +43,13 @@ if not app.config['DEBUG']:
 def not_found(error):
     return render_template('404.html'), 404
 
+assets = Environment()
+assets.init_app(app)
 
+app.register_blueprint(base_blueprint)
 app.register_blueprint(api_blueprint)
 
-IndexView.register(app)
+IndexView.register(app, route_base='/')
 
 # Later on you'll import the other blueprints the same way:
 #from app.comments.views import mod as commentsModule

@@ -18,7 +18,7 @@ class DownloadVideoService(object):
         video_url = kwargs.pop('video_url', self.video.get('url'))
 
         filename = os.path.basename(video_url)
-        file_path = os.path.join(settings.STATIC_PATH, filename)
+        file_path = os.path.join(settings.MEDIA_PATH, filename)
 
         message = 'File already exists: %s' % filename
 
@@ -30,10 +30,11 @@ class DownloadVideoService(object):
             except Exception as e:
                 message = 'File not downloaded: %s' % e
             
-
+        #logger.info('%s : %s ' % (file_path, message))
         return file_path, message
 
     def save(self, video_url, file_path):
+        #logger.debug('Saving %s to %s' % (video_url, file_path))
         with open(file_path, 'wb') as handle:
             resp = requests.get(video_url, stream=True)
 
