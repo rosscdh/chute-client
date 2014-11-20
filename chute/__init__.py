@@ -6,6 +6,7 @@ from flask import Flask, render_template
 from flask.ext.rq import RQ
 
 from chute.views import blueprint as api_blueprint
+from chute.views import IndexView
 
 app = Flask(__name__)
 app.config.from_object('config')
@@ -44,6 +45,8 @@ def not_found(error):
 
 
 app.register_blueprint(api_blueprint)
+
+IndexView.register(app)
 
 # Later on you'll import the other blueprints the same way:
 #from app.comments.views import mod as commentsModule

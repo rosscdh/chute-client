@@ -8,8 +8,10 @@ Views to provide api endpoints that:
 from flask import Blueprint, request, url_for, Response
 
 from flask.ext import restful
-from flask.ext.restful import reqparse#, abort, Api, Resource
 from flask.ext.rq import get_queue
+from flask.ext.classy import FlaskView
+from flask.ext.restful import reqparse
+
 
 from .tasks import download_video
 
@@ -21,6 +23,11 @@ from .tasks import download_video
 #     callback_webhook = wtforms.validators.URL('callback_webhook', require_tld=False, validators=[validators.DataRequired()])
 #     video_id = wtforms.validators.UUID('video_id', validators=[validators.DataRequired()])
 #     media = wtforms.validators.UUID('video_id', validators=[validators.DataRequired()])
+
+
+class IndexView(FlaskView):
+    def index(self):
+        return "<br>".join(['yay','ysy'])
 
 
 class DownloadMedia(restful.Resource):
