@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from .services import DownloadVideoService
 
+import json
 import requests
 
 
@@ -11,7 +12,7 @@ def download_video(data, *args, **kwargs):
 
     for i, item in enumerate(data.get('media', [])):
 
-        video_id = data.get('id', None)
+        video_id = data.get('video_id', None)
 
         video = {
           'id': video_id,
@@ -19,17 +20,16 @@ def download_video(data, *args, **kwargs):
         }
 
         service = DownloadVideoService(video=video)
-        file_path, result = service.process()
+        file_path, download_result = service.process()
 
-        results.append({"file_path": file_path, "result": result})
+        results.append({"file_path": file_path, "result": download_result})
 
         if callback_webhook:
             # Post out to callback
-            requests.post(callback_webhook, data={
-              'queue_id': None,
+            requests.post(callback_webhook, json.dumps({
+              'job_id': None,
               'video_id': video_id,
-              'file_path': file_path, 
-              'result': result,
-            })
+              'result': download_result,
+            }), headers={'content-type': 'application/json'})
 
     return results

@@ -19,17 +19,29 @@ class DownloadVideoService(object):
 
         filename = os.path.basename(video_url)
         file_path = os.path.join(settings.STATIC_PATH, filename)
-        
+
+        message = 'File already exists: %s' % filename
+
+        if not os.path.exists(file_path):
+            try:
+                self.save(video_url, file_path)
+                message = 'File downloaded: %s' % filename
+
+            except Exception as e:
+                message = 'File not downloaded: %s' % e
+            
+
+        return file_path, message
+
+    def save(self, video_url, file_path):
         with open(file_path, 'wb') as handle:
             resp = requests.get(video_url, stream=True)
 
             if not resp.ok:
-                raise Exception('Download Error: %s' % video_url)
+                raise Exception('Download Error: %s %s' % (resp, video_url))
 
             for block in resp.iter_content(1024):
                 if not block:
                     break
 
                 handle.write(block)
-
-        return file_path, True
