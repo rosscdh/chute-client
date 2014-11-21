@@ -95,25 +95,43 @@
     {% endraw %}
 
     <!-- jQuery -->
-    {% assets "js/jquery.min.js", "js/jquery-ui.min.js", "js/chute.jquery.js", "js/maximage-2.0.js", "js/handlebars.min.js", "js/js-signals.min.js", "js/hasher.min.js", "js/bootstrap.min.js", "js/clean-blog.js" %}
+    {% assets "js/jquery.min.js", "js/jquery-ui.min.js", "js/chute.jquery.js", "js/maximage-2.0.js", "js/pusher-2.1.6.min.js", "js/handlebars.min.js", "js/js-signals.min.js", "js/hasher.min.js", "js/bootstrap.min.js", "js/clean-blog.js" %}
         <script type="text/javascript" src="{{ ASSET_URL }}"></script>
     {% endassets %}
 
     <script>
     'use strict';
     $(document).ready(function( ) {
-
         var basic_template = $("script#tpl-layout-basic").html();
         var video_template = $("script#tpl-layout-video").html();
 
-        $( "body" ).chute_controller({
+        var chute_object = {
             'feed': {{ feed_json|safe }},
             'project': {{ project_json|safe }},
             'templates': {
                 'basic': basic_template,
                 'video': video_template,
             },
+        };
+
+        Pusher.host    = 'localhost'
+        Pusher.ws_port = 8080
+        Pusher.wss_port = 8080
+        var pusher = new Pusher('{{ pusher.PUSHER_KEY }}');
+        var pusher_channels = {
+            'project': pusher.subscribe(chute_object.project.slug),
+            'box': pusher.subscribe(chute_object.project.slug +'-{{ mac_addr }}'),
+        }
+
+        pusher_channels.project.bind('reload', function(data) {
+          window.location.reload();
         });
+        pusher_channels.box.bind('reload', function(data) {
+          window.location.reload();
+        });
+
+
+        $( "body" ).chute_controller(chute_object);
         window.chute = $( "body" ).data( 'chute-chute_controller' );
 
         //handle hash changes

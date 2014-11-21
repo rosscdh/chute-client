@@ -37,7 +37,11 @@ class IndexView(FlaskView):
 
         return render_template('player.html',
                 project_json=open(project_path).read().decode('utf8'),
-                feed_json=open(feed_path).read().decode('utf8'))
+                feed_json=open(feed_path).read().decode('utf8'),
+                mac_addr=settings.MAC_ADDR,
+                pusher={
+                    'PUSHER_KEY': settings.PUSHER_KEY,
+                })
 
 
 base_blueprint = Blueprint('base', __name__, template_folder='templates')
