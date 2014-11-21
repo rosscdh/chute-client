@@ -8,7 +8,7 @@ TRUTHY = ['true', 'yes', 't', '1', 1]
 class Workers(Command):
 
     option_list = (
-        Option('--queues', '-q', dest='queues', default=False),
+        Option('--queues', '-q', dest='queues', default='default low high'),
         Option('--seperate-threads', '-t', dest='seperate_threads', default=False),
     )
 

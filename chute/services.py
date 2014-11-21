@@ -7,10 +7,33 @@ Services to
 import config as settings
 
 import os
+import json
 import requests
 
+class ProcessFeedMediaSerivce(object):
+    def __init__(self, feed):
+        if not getattr(feed, 'read', False):
+            raise Exception('Expecting an open file ready for reading')
 
-class DownloadVideoService(object):
+        self.feed = json.loads(feed.read().decode('utf8'))
+
+    def process(self):
+        for i, item in enumerate(self.feed):
+
+            for url in [item.get('picture'), item.get('video')]:
+                if url:
+                    media = {
+                        'id': item.get('id'),
+                        'url': url
+                    }
+
+                    s = DownloadMediaService(video=media)
+                    file_path, download_result = s.process()
+
+                    print('File: %s Download Result: %s' % (file_path, download_result))
+
+
+class DownloadMediaService(object):
     def __init__(self, video, **kwargs):
         self.video = video
 

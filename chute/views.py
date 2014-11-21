@@ -12,11 +12,15 @@ from flask.ext.rq import get_queue
 from flask.ext.classy import FlaskView
 
 
-from .tasks import download_video
+from .tasks import download_feed, download_video
+
+
+import config as settings
 
 # import flask_wtf
 # from wtforms import validators
-
+import os
+import json
 
 # class MediaDownloadValidator(flask_wtf.Form):
 #     callback_webhook = wtforms.validators.URL('callback_webhook', require_tld=False, validators=[validators.DataRequired()])
@@ -26,7 +30,14 @@ from .tasks import download_video
 
 class IndexView(FlaskView):
     def get(self):
-        return render_template('player.html')
+        project_path = os.path.join(settings.MEDIA_PATH, 'project.json')
+        feed_path = os.path.join(settings.MEDIA_PATH, 'feed.json')
+
+        job = get_queue().enqueue(download_feed, feed=feed_path)
+
+        return render_template('player.html',
+                project_json=open(project_path).read().decode('utf8'),
+                feed_json=open(feed_path).read().decode('utf8'))
 
 
 base_blueprint = Blueprint('base', __name__, template_folder='templates')

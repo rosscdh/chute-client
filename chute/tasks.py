@@ -1,8 +1,16 @@
 # -*- coding: utf-8 -*-
-from .services import DownloadVideoService
+from .services import DownloadMediaService
+from .services import ProcessFeedMediaSerivce
+
+from uuid import getnode as get_mac
 
 import json
 import requests
+
+
+def download_feed(feed, *args, **kwargs):
+  s = ProcessFeedMediaSerivce(feed=open(feed, 'r'))
+  s.process()
 
 
 def download_video(data, *args, **kwargs):
@@ -19,7 +27,7 @@ def download_video(data, *args, **kwargs):
           'url': item,
         }
 
-        service = DownloadVideoService(video=video)
+        service = DownloadMediaService(video=video)
         file_path, download_result = service.process()
 
         results.append({"file_path": file_path, "result": download_result})
@@ -28,6 +36,7 @@ def download_video(data, *args, **kwargs):
             # Post out to callback
             requests.post(callback_webhook, json.dumps({
               'job_id': None,
+              'mac': get_mac(),
               'video_id': video_id,
               'result': download_result,
             }), headers={'content-type': 'application/json'})

@@ -3,8 +3,8 @@ import os
 import sys
 
 from flask.ext.rq import RQ
-from flask import Flask, render_template
 from flask.ext.assets import Environment
+from flask import Flask, render_template, send_from_directory
 
 from chute.views import base_blueprint
 from chute.views import blueprint as api_blueprint
@@ -57,3 +57,9 @@ IndexView.register(app, route_base='/')
 #app.register_blueprint(commentsModule)
 #app.register_blueprint(postsModule)
 RQ(app)  # tasks
+
+
+@app.route('/media/<path:filename>')
+def media(filename):
+    return send_from_directory(app.config['MEDIA_PATH'], filename)
+
