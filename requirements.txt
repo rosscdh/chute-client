@@ -7,3 +7,4 @@ Flask-Script  # scripting
 Flask-Uploads
 Flask-WTF
 Flask-Assets
+requests
