@@ -86,6 +86,10 @@ $(function() {
         picture_is_local: function ( feed_item ) {
             var self = this;
             var is_present = false;
+            if (feed_item.video === undefined) {
+                return {'is_present': false, 'filename': null};
+            }
+
             var pic = feed_item.picture.split('/');
             var pic_filename = pic[pic.length - 1]
 
@@ -105,7 +109,6 @@ $(function() {
         video_is_local: function ( feed_item ) {
             var self = this;
             var is_present = false;
-
             if (feed_item.video === undefined) {
                 return {'is_present': false, 'filename': null};
             }
