@@ -134,9 +134,9 @@
             },
         };
 
-        Pusher.host    = 'localhost'
-        Pusher.ws_port = 8080
-        Pusher.wss_port = 8080
+        // Pusher.host    = 'localhost'
+        // Pusher.ws_port = 8080
+        // Pusher.wss_port = 8080
         var pusher = new Pusher('{{ pusher.PUSHER_KEY }}');
         var pusher_channels = {
             'project': pusher.subscribe(chute_object.project.slug),
