@@ -9,9 +9,9 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Page</title>
+    <title>&nbsp;</title>
 
-    {% assets output="css/bootstrap.min.css", "css/clean-blog.css" %}
+    {% assets "css/bootstrap.min.css", "css/clean-blog.css" %}
         <link href="{{ ASSET_URL }}" rel="stylesheet" />
     {% endassets %}
     <style>
@@ -22,7 +22,12 @@
             top:0;left:0;
             position:absolute;
         }
-        
+
+        #maximage {
+        /*              position:fixed !important;*/
+            /*position:relative !important;*/
+        }
+
         h1, p {
             background:white;
             background-color:rgba(255, 255, 255, 0.8);
@@ -38,59 +43,72 @@
 
 <body>
     <!-- Main Content Page -->
-    <div id="content"></div>
+    <div id="content" class="container-fluid"></div>
 
     <!-- Page Templates -->
     {% raw %}
     <script id="tpl-layout-basic" type="text/x-handlebars-template">
-    <header class="intro-header" style="background-image: url('{{ object.picture }}');">
-        <div class="container">
-            <div class="row">
-                &nbsp;
-            </div>
-        </div>
-    
-        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-            <div class="post-heading">
-                <h1 data-name="name">{{ object.name }}</h1>
-                <h2 class="subheading" data-name="message">{{ object.message }}</h2>
-            </div>
-        </div>
-    </header>
-
-    
-    <article>
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1" data-name="description">
-                    {{ object.description }}
+        <header class="intro-header" style="background-image: url('{{ object.picture }}');">
+            <div class="container">
+                <div class="row">
+                    &nbsp;
                 </div>
             </div>
-        </div>
-    </article>
+        
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <h1 data-name="name">{{ object.name }}</h1>
+                    <h2 class="subheading" data-name="message">{{ object.message }}</h2>
+                </div>
+            </div>
+        </header>
+
+        
+        <article>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1" data-name="description">
+                        {{ object.description }}
+                    </div>
+                </div>
+            </div>
+        </article>
     </script>
 
     <script id="tpl-layout-video" type="text/x-handlebars-template">
-    <!-- HTML5 Video Code "Video For Everybody" http://camendesign.com/code/video_for_everybody -->
-    <video autoplay="autoplay" loop="loop" autobuffer="autobuffer" muted="muted" poster="{{ object.picture }}" width="640" height="360">
+        <!-- HTML5 Video Code "Video For Everybody" http://camendesign.com/code/video_for_everybody -->
+        <video autoplay="autoplay" loop="loop" autobuffer="autobuffer" muted="muted" poster="{{ object.picture }}" width="640" height="360">
 
-        <source src="{{ object.video }}" type="video/webm" />
-        
-        <object type="application/x-shockwave-flash" data="/static/swf/flowplayer-3.2.1.swf" width="640" height="360">
-            <param name="movie" value="/static/swf/flowplayer-3.2.1.swf" />
-            <param name="allowFullScreen" value="true" />
-            <param name="wmode" value="transparent" />
-            <param name="flashVars" value="config={'playlist':['{{ object.picture }}',{'url':'{{ object.video }}','autoPlay':false}]}" />
-            <img alt="{{ object.name }}" src="{{ object.picture }}" width="640" height="360" title="{{ object.description }}" />
-        </object>
-    </video>
-    <script type="text/javascript" charset="utf-8">
-    $(function(){
-        // Helper function to Fill and Center the HTML5 Video
-        jQuery('video, object').maximage('maxcover');
-    });
+            <source src="{{ object.video }}" type="video/webm" />
+            
+            <object type="application/x-shockwave-flash" data="/static/swf/flowplayer-3.2.1.swf" width="640" height="360">
+                <param name="movie" value="/static/swf/flowplayer-3.2.1.swf" />
+                <param name="allowFullScreen" value="true" />
+                <param name="wmode" value="transparent" />
+                <param name="flashVars" value="config={'playlist':['{{ object.picture }}',{'url':'{{ object.video }}','autoPlay':false}]}" />
+                <img alt="{{ object.name }}" src="{{ object.picture }}" width="640" height="360" title="{{ object.description }}" />
+            </object>
+        </video>
+        <script type="text/javascript" charset="utf-8">
+        $(function(){
+            // Helper function to Fill and Center the HTML5 Video
+            jQuery('video, object').maximage('maxcover');
+        });
+        </script>
     </script>
 
+    <script id="tpl-layout-image" type="text/x-handlebars-template">
+        <div id="maximage">
+            <img src="{{ object.picture }}" />
+        </div>
+            <h1>{{ object.name }}</h1>
+            <p>{{ object.description }}</p>
+        <script type="text/javascript" charset="utf-8">
+        $(function(){
+            // Helper function to Fill and Center the HTML5 Video
+            jQuery('#maximage').maximage('maxcover');
+        });
+        </script>
     </script>
     {% endraw %}
 
@@ -104,6 +122,7 @@
     $(document).ready(function( ) {
         var basic_template = $("script#tpl-layout-basic").html();
         var video_template = $("script#tpl-layout-video").html();
+        var image_template = $("script#tpl-layout-image").html();
 
         var chute_object = {
             'feed': {{ feed_json|safe }},
@@ -111,6 +130,7 @@
             'templates': {
                 'basic': basic_template,
                 'video': video_template,
+                'image': image_template,
             },
         };
 
@@ -129,15 +149,18 @@
         pusher_channels.box.bind('reload', function(data) {
           window.location.reload();
         });
+        pusher_channels.box.bind('goto', function(data) {
+          handleChanges( data.pk );
+        });
 
 
         $( "body" ).chute_controller(chute_object);
         window.chute = $( "body" ).data( 'chute-chute_controller' );
 
         //handle hash changes
-        function handleChanges(newHash, oldHash){
-            if ( newHash !== NaN && newHash !== '' ) {
-                var pk = parseInt( newHash );
+        function handleChanges( newPk ){
+            if ( newPk !== NaN && newPk !== '' ) {
+                var pk = parseInt( newPk );
                 window.chute.goto( pk );
             }
         }
