@@ -86,7 +86,7 @@ $(function() {
         picture_is_local: function ( feed_item ) {
             var self = this;
             var is_present = false;
-            if (feed_item.video === undefined) {
+            if (!feed_item.picture || feed_item.picture === undefined) {
                 return {'is_present': false, 'filename': null};
             }
 
@@ -109,7 +109,7 @@ $(function() {
         video_is_local: function ( feed_item ) {
             var self = this;
             var is_present = false;
-            if (feed_item.video === undefined) {
+            if (!feed_item.video || feed_item.video === undefined) {
                 return {'is_present': false, 'filename': null};
             }
 
@@ -133,6 +133,7 @@ $(function() {
         render: function ( source ) {
             var self = this;
             var target = self.options.target;
+
             var compiled = self.options.renderer.compile( source );
 
             var pic_is_present = self.picture_is_local(this.current_feeditem)
@@ -147,7 +148,8 @@ $(function() {
             var context = {
                 'project': this.project,
                 'object': this.current_feeditem,
-        };
+            };
+
             target.html( compiled( context ) );
         },
         goto: function ( pk ) {

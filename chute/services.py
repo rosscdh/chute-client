@@ -10,7 +10,21 @@ import os
 import json
 import requests
 
-class ProcessFeedMediaSerivce(object):
+
+class RegisterBoxService(object):
+    """
+    Service registers this box/client with the core server
+    """
+    def process(self):
+        data = {
+            'mac_address': settings.MAC_ADDR
+        }
+        url = '%s%s' % (settings.CORE_SERVER_ENDPOINT,
+                        'box/register/')
+        return requests.post(url, data=data)
+
+
+class ProcessFeedMediaService(object):
     def __init__(self, feed):
         if not getattr(feed, 'read', False):
             raise Exception('Expecting an open file ready for reading')

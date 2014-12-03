@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from .services import DownloadMediaService
-from .services import ProcessFeedMediaSerivce
+from .services import ProcessFeedMediaService
 
 from uuid import getnode as get_mac
 
@@ -9,7 +9,7 @@ import requests
 
 
 def download_feed(feed, *args, **kwargs):
-  s = ProcessFeedMediaSerivce(feed=open(feed, 'r'))
+  s = ProcessFeedMediaService(feed=open(feed, 'r'))
   s.process()
 
 
