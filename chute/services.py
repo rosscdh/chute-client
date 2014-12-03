@@ -16,10 +16,11 @@ class BoxApiService(object):
     Service registers this box/client with the core server
     """
     FEED_PATH = os.path.join(settings.MEDIA_PATH, 'playlist.json')
+    MAC_ADDRESS = settings.MAC_ADDR
 
     def register(self):
         data = {
-            'mac_address': settings.MAC_ADDR
+            'mac_address': self.MAC_ADDRESS
         }
         url = '%s%s' % (settings.CORE_SERVER_ENDPOINT,
                         'box/register/')

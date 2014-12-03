@@ -13,4 +13,5 @@ class Register(Command):
         """
         """
         s = BoxApiService()
-        return s.register()
+        resp = s.register()
+        print(resp.content)
