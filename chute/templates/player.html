@@ -17,7 +17,7 @@
     <style>
         html {overflow-x:hidden;}
         body {font-family:arial;margin:0;padding:0;}
-        
+
         video, object {
             top:0;left:0;
             position:absolute;
@@ -38,6 +38,15 @@
             position:relative;
             padding:10px;
         }
+        .no-content-found p {
+            color:#333;
+        }
+        .no-content-found h1{
+            background:black;
+            background-color:rgba(0, 0, 0, 0.8);
+            position:relative;
+            padding:10px;
+        }
     </style>
 </head>
 
@@ -47,6 +56,17 @@
 
     <!-- Page Templates -->
     {% raw %}
+    <script id="tpl-layout-no_content_template" type="text/x-handlebars-template">
+        <header class="intro-header">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading no-content-found">
+                    <h1 data-name="name">No Feed could be found<br/><small>Please ensure this box is connected to a project</small></h1>
+                    <p><small>{{ settings.CORE_SERVER }}</small></p>
+                </div>
+            </div>
+        </header>
+    </script>
+
     <script id="tpl-layout-basic" type="text/x-handlebars-template">
         <header class="intro-header" style="background-image: url('{{ object.picture }}');">
             <div class="container">
@@ -54,7 +74,7 @@
                     &nbsp;
                 </div>
             </div>
-        
+
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
                 <div class="post-heading">
                     <h1 data-name="name">{{ object.name }}</h1>
@@ -63,7 +83,6 @@
             </div>
         </header>
 
-        
         <article>
             <div class="container">
                 <div class="row">
@@ -80,7 +99,7 @@
         <video autoplay="autoplay" loop="loop" autobuffer="autobuffer" muted="muted" poster="{{ object.picture }}" width="640" height="360">
 
             <source src="{{ object.video }}" type="video/webm" />
-            
+
             <object type="application/x-shockwave-flash" data="/static/swf/flowplayer-3.2.1.swf" width="640" height="360">
                 <param name="movie" value="/static/swf/flowplayer-3.2.1.swf" />
                 <param name="allowFullScreen" value="true" />
@@ -120,6 +139,7 @@
     <script>
     'use strict';
     $(document).ready(function( ) {
+        var no_content_template = $("script#tpl-layout-no_content_template").html();
         var basic_template = $("script#tpl-layout-basic").html();
         var video_template = $("script#tpl-layout-video").html();
         var image_template = $("script#tpl-layout-image").html();
@@ -127,31 +147,36 @@
         var chute_object = {
             'feed': {{ feed_json|safe }},
             'project': {{ project_json|safe }},
+            'settings': {{ settings|safe }},
             'templates': {
+                'no_content': no_content_template,
                 'basic': basic_template,
                 'video': video_template,
+                'video_full': video_template,
                 'image': image_template,
             },
         };
 
-        // Pusher.host    = 'localhost'
-        // Pusher.ws_port = 8080
-        // Pusher.wss_port = 8080
-        var pusher = new Pusher('{{ pusher.PUSHER_KEY }}');
-        var pusher_channels = {
-            'project': pusher.subscribe(chute_object.project.slug),
-            'box': pusher.subscribe(chute_object.project.slug +'-{{ mac_addr }}'),
-        }
+        if ( chute_object.project !== null ) {
+            // Pusher.host    = 'localhost'
+            // Pusher.ws_port = 8080
+            // Pusher.wss_port = 8080
+            var pusher = new Pusher('{{ pusher.PUSHER_KEY }}');
+            var pusher_channels = {
+                'project': pusher.subscribe(chute_object.project.slug),
+                'box': pusher.subscribe(chute_object.project.slug +'-{{ mac_addr }}'),
+            }
 
-        pusher_channels.project.bind('reload', function(data) {
-          window.location.reload();
-        });
-        pusher_channels.box.bind('reload', function(data) {
-          window.location.reload();
-        });
-        pusher_channels.box.bind('goto', function(data) {
-          handleChanges( data.pk );
-        });
+            pusher_channels.project.bind('reload', function(data) {
+              window.location.reload();
+            });
+            pusher_channels.box.bind('reload', function(data) {
+              window.location.reload();
+            });
+            pusher_channels.box.bind('goto', function(data) {
+              handleChanges( data.pk );
+            });
+        }
 
 
         $( "body" ).chute_controller(chute_object);

@@ -20,6 +20,7 @@ $(function() {
             'feed': undefined,
             'project': undefined,
             'templates': undefined,
+            'settings': undefined,
             'renderer': Handlebars || undefined,
 
             'target': $('div#content'),
@@ -40,10 +41,15 @@ $(function() {
             if ( this.options.feed === undefined ) {
                 throw new UninitializedObjectException("You need to initialize the chute_controller");
             }
-
-            self.current_feeditem = this.options.feed[0];
-            self.wait_for = self.current_feeditem.wait_for;
-            self.template_name = self.current_feeditem.template_name;
+            try {
+                self.current_feeditem = this.options.feed[0];
+                self.wait_for = self.current_feeditem.wait_for;
+                self.template_name = self.current_feeditem.template_name;
+            } catch ( err ) {
+                self.current_feeditem = {};
+                self.wait_for = 3600;
+                self.template_name = 'no_content';
+            }
 
             this._listen();
             this._begin();
@@ -65,13 +71,12 @@ $(function() {
                 window.clearTimeout( self.timer );
             }
             // ensure we have more than 1 item in the feed for the rotator
-            if ( self.options.feed.length > 1 ) {
+            if ( self.options.feed && self.options.feed.length > 1 ) {
 
                 self.timer = window.setTimeout( function () {
                     // when it expires call next
                     self.next();
                 }, self.timeout());
-
             }
         },
         _begin: function () {
@@ -79,7 +84,7 @@ $(function() {
 
             // setup window setTime and window.clearTimer handler
             var source = this.options.templates[self.template_name];
-            
+
             self.render( source );
             self._timer();
         },
@@ -148,9 +153,12 @@ $(function() {
             var context = {
                 'project': this.project,
                 'object': this.current_feeditem,
+                'settings': this.options.settings,
             };
 
-            target.html( compiled( context ) );
+            var html = compiled( context );
+
+            target.html( html );
         },
         goto: function ( pk ) {
             var self = this;

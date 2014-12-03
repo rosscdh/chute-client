@@ -11,17 +11,34 @@ import json
 import requests
 
 
-class RegisterBoxService(object):
+class BoxApiService(object):
     """
     Service registers this box/client with the core server
     """
-    def process(self):
+    FEED_PATH = os.path.join(settings.MEDIA_PATH, 'playlist.json')
+
+    def register(self):
         data = {
             'mac_address': settings.MAC_ADDR
         }
         url = '%s%s' % (settings.CORE_SERVER_ENDPOINT,
                         'box/register/')
         return requests.post(url, data=data)
+
+    def playlist(self, **kwargs):
+        store = kwargs.get('store', True)
+
+        url = '%s%s' % (settings.CORE_SERVER_ENDPOINT,
+                        'box/%s/playlist/' % settings.MAC_ADDR)
+
+        resp = requests.get(url)
+        data = resp.json()
+
+        if store is True:
+            with open(self.FEED_PATH, 'w') as playlist:
+                playlist.write(resp.content)
+
+        return data
 
 
 class ProcessFeedMediaService(object):
@@ -66,7 +83,7 @@ class DownloadMediaService(object):
 
             except Exception as e:
                 message = 'File not downloaded: %s' % e
-            
+
         #logger.info('%s : %s ' % (file_path, message))
         return file_path, message
 

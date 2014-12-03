@@ -11,34 +11,30 @@ from flask.ext import restful
 from flask.ext.rq import get_queue
 from flask.ext.classy import FlaskView
 
-
+from .services import BoxApiService
 from .tasks import download_feed, download_video
-
 
 import config as settings
 
-# import flask_wtf
-# from wtforms import validators
 import os
 import json
-
-# class MediaDownloadValidator(flask_wtf.Form):
-#     callback_webhook = wtforms.validators.URL('callback_webhook', require_tld=False, validators=[validators.DataRequired()])
-#     video_id = wtforms.validators.UUID('video_id', validators=[validators.DataRequired()])
-#     media = wtforms.validators.UUID('video_id', validators=[validators.DataRequired()])
 
 
 class IndexView(FlaskView):
     def get(self):
-        project_path = os.path.join(settings.MEDIA_PATH, 'project.json')
-        feed_path = os.path.join(settings.MEDIA_PATH, 'feed.json')
+        s = BoxApiService()
+        playlist = s.playlist(store=True)
 
-        job = get_queue().enqueue(download_feed, feed=feed_path)
+        job = get_queue().enqueue(download_feed, feed=s.FEED_PATH)
 
         return render_template('player.html',
-                project_json=open(project_path).read().decode('utf8'),
-                feed_json=open(feed_path).read().decode('utf8'),
+                project_json=json.dumps(playlist.get('project', {})),
+                feed_json=json.dumps(playlist.get('feed', [])),
                 mac_addr=settings.MAC_ADDR,
+                settings=json.dumps({
+                    'CORE_SERVER': settings.CORE_SERVER,
+                    'MAC_ADDRESS': settings.MAC_ADDR,
+                }),
                 pusher={
                     'PUSHER_KEY': settings.PUSHER_KEY,
                 })
