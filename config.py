@@ -6,7 +6,7 @@ _basedir = os.path.abspath(os.path.dirname(__file__))
 
 DEBUG = True
 
-CORE_SERVER_ENDPOINT = 'http://localhost:8000/api/v1/'  # must have / at end
+CORE_SERVER_ENDPOINT = 'http://app.magnificent.de/api/v1/box/'  # must have / at end
 MAC_ADDR = get_mac()
 
 PUSHER_APP_ID = 79947
