@@ -158,12 +158,12 @@
         };
 
         if ( chute_object.project !== null ) {
-            // Pusher.host    = 'localhost'
-            // Pusher.ws_port = 8080
-            // Pusher.wss_port = 8080
-            var pusher = new Pusher('{{ pusher.PUSHER_KEY }}');
+            Pusher.host    = 'localhost'
+            Pusher.ws_port = 8080
+            Pusher.wss_port = 8080
+            var pusher = new Pusher('{{ pusher.PUSHER_KEY }}', { authEndpoint: '{{ settings.CORE_SERVER_ENDPOINT }}box/auth/pusher/'});
             var pusher_channels = {
-                'project': pusher.subscribe(chute_object.project.slug),
+                'project': pusher.subscribe('presence-' + chute_object.project.slug ),
                 'box': pusher.subscribe(chute_object.project.slug +'-{{ mac_addr }}'),
             }
 

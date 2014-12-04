@@ -33,6 +33,7 @@ class IndexView(FlaskView):
                 mac_addr=settings.MAC_ADDR,
                 settings=json.dumps({
                     'CORE_SERVER': settings.CORE_SERVER,
+                    'CORE_SERVER_ENDPOINT': settings.CORE_SERVER_ENDPOINT,
                     'MAC_ADDRESS': settings.MAC_ADDR,
                 }),
                 pusher={
