@@ -18,16 +18,20 @@ class BoxApiService(object):
     FEED_PATH = os.path.join(settings.MEDIA_PATH, 'playlist.json')
     MAC_ADDRESS = settings.MAC_ADDR
 
-    def register(self):
+    def register(self, **kwargs):
+        project_slug = kwargs.get('project', None)  # project_slug to register with
+        playlist_uuid = kwargs.get('playlist', True)  # playlist uuid to register with
+
         data = {
-            'mac_address': self.MAC_ADDRESS
+            'mac_address': self.MAC_ADDRESS,
+            'project': project_slug,
         }
         url = '%s%s' % (settings.CORE_SERVER_ENDPOINT,
                         'box/register/')
         return requests.post(url, data=data)
 
     def playlist(self, **kwargs):
-        store = kwargs.get('store', True)
+        store = kwargs.get('store', True)  # save the playlist locally
 
         url = '%s%s' % (settings.CORE_SERVER_ENDPOINT,
                         'box/%s/playlist/' % settings.MAC_ADDR)
