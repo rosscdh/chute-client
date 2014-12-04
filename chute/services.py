@@ -54,7 +54,10 @@ class ProcessFeedMediaService(object):
         self.feed = json.loads(feed.read().decode('utf8'))
 
     def process(self):
-        for i, item in enumerate(self.feed):
+        """
+        download media extracted from the feed
+        """
+        for i, item in enumerate(self.feed.get('feed', [])):
 
             for url in [item.get('picture'), item.get('video')]:
                 if url:
