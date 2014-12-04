@@ -17,7 +17,7 @@ def download_video(data, *args, **kwargs):
     callback_webhook = data.get('callback_webhook')
 
     results = []
-    import pdb;pdb.set_trace()
+
     for i, item in enumerate(data.get('media', [])):
 
         video_id = data.get('video_id', None)

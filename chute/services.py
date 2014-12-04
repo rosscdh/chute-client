@@ -6,6 +6,8 @@ Services to
 """
 import config as settings
 
+from flask.ext.rq import get_queue
+
 import os
 import json
 import requests
@@ -31,6 +33,7 @@ class BoxApiService(object):
         return requests.post(url, data=data)
 
     def playlist(self, **kwargs):
+        from .tasks import download_feed  # avoid cyclic import problem
         store = kwargs.get('store', True)  # save the playlist locally
 
         url = '%s%s' % (settings.CORE_SERVER_ENDPOINT,
@@ -42,6 +45,8 @@ class BoxApiService(object):
         if store is True:
             with open(self.FEED_PATH, 'w') as playlist:
                 playlist.write(resp.content)
+            # enqueue the data
+            get_queue().enqueue(download_feed, feed=self.FEED_PATH)
 
         return data
 
@@ -84,13 +89,13 @@ class DownloadMediaService(object):
 
         message = 'File already exists: %s' % filename
 
-        if not os.path.exists(file_path):
-            try:
-                self.save(video_url, file_path)
-                message = 'File downloaded: %s' % filename
+        #if not os.path.exists(file_path):
+        try:
+            self.save(video_url, file_path)
+            message = 'File downloaded: %s' % filename
 
-            except Exception as e:
-                message = 'File not downloaded: %s' % e
+        except Exception as e:
+            message = 'File not downloaded: %s' % e
 
         #logger.info('%s : %s ' % (file_path, message))
         return file_path, message
