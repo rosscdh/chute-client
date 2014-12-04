@@ -24,8 +24,6 @@ class IndexView(FlaskView):
         s = BoxApiService()
         playlist = s.playlist(store=False)
 
-        #get_queue().enqueue(download_feed, feed=s.FEED_PATH)
-
         return render_template('player.html',
                 project_json=json.dumps(playlist.get('project', {})),
                 feed_json=json.dumps(playlist.get('feed', [])),
@@ -41,6 +39,15 @@ class IndexView(FlaskView):
 
 
 base_blueprint = Blueprint('base', __name__, template_folder='templates')
+
+
+class UpdatePlaylistEndpoint(restful.Resource):
+    def post(self):
+        s = BoxApiService()
+        playlist = s.playlist(store=True)
+
+        return {
+        }, 202
 
 
 class DownloadMediaEndpoint(restful.Resource):
@@ -61,4 +68,5 @@ class DownloadMediaEndpoint(restful.Resource):
 
 blueprint = Blueprint('api', __name__)
 api = restful.Api(blueprint, prefix='/api')
-api.add_resource(DownloadMediaEndpoint, '/download')
+api.add_resource(UpdatePlaylistEndpoint, '/download/playlist')
+api.add_resource(DownloadMediaEndpoint, '/download/playlist/media')

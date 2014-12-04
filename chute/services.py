@@ -6,8 +6,6 @@ Services to
 """
 import config as settings
 
-from flask.ext.rq import get_queue
-
 import os
 import json
 import requests
@@ -21,9 +19,8 @@ class BoxApiService(object):
     MAC_ADDRESS = settings.MAC_ADDR
 
     def register(self, **kwargs):
-        from .tasks import download_feed  # avoid cyclic import problem
         project_slug = kwargs.get('project', None)  # project_slug to register with
-        playlist_uuid = kwargs.get('playlist', True)  # playlist uuid to register with
+        #playlist_uuid = kwargs.get('playlist', True)  # playlist uuid to register with
 
         data = {
             'mac_address': self.MAC_ADDRESS,
@@ -33,14 +30,9 @@ class BoxApiService(object):
                         'box/register/')
         resp = requests.post(url, data=data)
 
-        if resp.status_code in [200]:
-            # enqueue the data
-            get_queue().enqueue(download_feed, feed=self.FEED_PATH)
-
         return resp
 
     def playlist(self, **kwargs):
-        from .tasks import download_feed  # avoid cyclic import problem
         store = kwargs.get('store', True)  # save the playlist locally
 
         if store is False:
@@ -54,10 +46,6 @@ class BoxApiService(object):
 
             with open(self.FEED_PATH, 'w') as playlist:
                 playlist.write(resp.content)
-
-            if resp.status_code in [200, 206]:
-                # enqueue the data
-                job = get_queue().enqueue(download_feed, feed=self.FEED_PATH)
 
         return data
 
