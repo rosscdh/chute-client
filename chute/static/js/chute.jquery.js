@@ -151,13 +151,14 @@ $(function() {
             }
 
             var context = {
-                'project': this.project,
+                'project': this.options.project,
                 'object': this.current_feeditem,
                 'settings': this.options.settings,
             };
 
             var html = compiled( context );
-
+            this.log(context);
+            this.log(html);
             target.html( html );
         },
         goto: function ( pk ) {

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from flask.ext.rq import get_worker
-from flask.ext.script import Command, Manager, Option
+from flask.ext.script import Command, Option
 
 TRUTHY = ['true', 'yes', 't', '1', 1]
 

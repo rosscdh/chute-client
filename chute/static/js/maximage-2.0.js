@@ -63,7 +63,6 @@
  */
 
 
-
 (function ($) {
   "use strict";
   $.fn.maximage = function (settings, helperSettings) {

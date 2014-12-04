@@ -32,23 +32,32 @@ class BoxApiService(object):
         url = '%s%s' % (settings.CORE_SERVER_ENDPOINT,
                         'box/register/')
         resp = requests.post(url, data=data)
+
         if resp.status_code in [200]:
             # enqueue the data
             get_queue().enqueue(download_feed, feed=self.FEED_PATH)
+
         return resp
 
     def playlist(self, **kwargs):
+        from .tasks import download_feed  # avoid cyclic import problem
         store = kwargs.get('store', True)  # save the playlist locally
 
-        url = '%s%s' % (settings.CORE_SERVER_ENDPOINT,
-                        'box/%s/playlist/' % settings.MAC_ADDR)
+        if store is False:
+            data = json.loads(open(self.FEED_PATH, 'r').read())
+        else:
+            url = '%s%s' % (settings.CORE_SERVER_ENDPOINT,
+                            'box/%s/playlist/' % settings.MAC_ADDR)
 
-        resp = requests.get(url)
-        data = resp.json()
+            resp = requests.get(url)
+            data = resp.json()
 
-        if store is True:
             with open(self.FEED_PATH, 'w') as playlist:
                 playlist.write(resp.content)
+
+            if resp.status_code in [200, 206]:
+                # enqueue the data
+                job = get_queue().enqueue(download_feed, feed=self.FEED_PATH)
 
         return data
 

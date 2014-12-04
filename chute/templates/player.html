@@ -51,6 +51,7 @@
 </head>
 
 <body>
+
     <!-- Main Content Page -->
     <div id="content" class="container-fluid"></div>
 
@@ -97,14 +98,13 @@
     <script id="tpl-layout-video" type="text/x-handlebars-template">
         <!-- HTML5 Video Code "Video For Everybody" http://camendesign.com/code/video_for_everybody -->
         <video autoplay="autoplay" loop="loop" autobuffer="autobuffer" muted="muted" poster="{{ object.picture }}" width="640" height="360">
-
-            <source src="{{ object.video }}" type="video/webm" />
+            <source src="{{ object.video }}" />
 
             <object type="application/x-shockwave-flash" data="/static/swf/flowplayer-3.2.1.swf" width="640" height="360">
                 <param name="movie" value="/static/swf/flowplayer-3.2.1.swf" />
                 <param name="allowFullScreen" value="true" />
                 <param name="wmode" value="transparent" />
-                <param name="flashVars" value="config={'playlist':['{{ object.picture }}',{'url':'{{ object.video }}','autoPlay':false}]}" />
+                <param name="flashVars" value="config={'playlist':['{{ object.picture }}',{'url':'{{ object.video }}','autoPlay':true}]}" />
                 <img alt="{{ object.name }}" src="{{ object.picture }}" width="640" height="360" title="{{ object.description }}" />
             </object>
         </video>

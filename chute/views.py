@@ -12,7 +12,7 @@ from flask.ext.rq import get_queue
 from flask.ext.classy import FlaskView
 
 from .services import BoxApiService
-from .tasks import download_feed, download_video
+from .tasks import download_feed
 
 import config as settings
 
@@ -22,9 +22,9 @@ import json
 class IndexView(FlaskView):
     def get(self):
         s = BoxApiService()
-        playlist = s.playlist(store=True)
+        playlist = s.playlist(store=False)
 
-        get_queue().enqueue(download_feed, feed=s.FEED_PATH)
+        #get_queue().enqueue(download_feed, feed=s.FEED_PATH)
 
         return render_template('player.html',
                 project_json=json.dumps(playlist.get('project', {})),
@@ -45,9 +45,10 @@ base_blueprint = Blueprint('base', __name__, template_folder='templates')
 
 class DownloadMediaEndpoint(restful.Resource):
     def post(self):
+        s = BoxApiService()
         data = request.json
 
-        job = get_queue().enqueue(download_video, job_id='1234-123', data=data)
+        job = get_queue().enqueue(download_feed, feed=s.FEED_PATH)
 
         return {
             'job': {
