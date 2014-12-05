@@ -4,14 +4,14 @@
 <head>
 
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
 
     <title>&nbsp;</title>
 
-    {% assets "css/bootstrap.min.css", "css/clean-blog.css" %}
+    {% assets "css/bootstrap.min.css", "css/clean-blog.css", "video-js/video-js.min.css" %}
         <link href="{{ ASSET_URL }}" rel="stylesheet" />
     {% endassets %}
     <style>
@@ -48,6 +48,11 @@
             padding:10px;
         }
     </style>
+
+    {% assets "js/modernizr-2.8.3-custom.min.js" %}
+        <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+    {% endassets %}
+
 </head>
 
 <body>
@@ -96,22 +101,18 @@
     </script>
 
     <script id="tpl-layout-video" type="text/x-handlebars-template">
-        <!-- HTML5 Video Code "Video For Everybody" http://camendesign.com/code/video_for_everybody -->
-        <video autoplay="autoplay" loop="loop" autobuffer="autobuffer" muted="muted" poster="{{ object.picture }}" width="640" height="360">
-            <source src="{{ object.video }}" />
-
-            <object type="application/x-shockwave-flash" data="/static/swf/flowplayer-3.2.1.swf" width="640" height="360">
-                <param name="movie" value="/static/swf/flowplayer-3.2.1.swf" />
-                <param name="allowFullScreen" value="true" />
-                <param name="wmode" value="transparent" />
-                <param name="flashVars" value="config={'playlist':['{{ object.picture }}',{'url':'{{ object.video }}','autoPlay':true}]}" />
-                <img alt="{{ object.name }}" src="{{ object.picture }}" width="640" height="360" title="{{ object.description }}" />
-            </object>
+        <video id="video_fullscreen" class="video-js vjs-default-skin"
+          controls preload="auto" width="640" height="264"
+          poster="{{ object.picture }}"
+          data-setup='{"example_option":false}'>
+         <source src="{{ object.video }}" type='video/mp4' />
+         <source src="{{ object.video }}" type='video/webm' />
+         <p class="vjs-no-js">To view this video please enable JavaScript, and consider upgrading to a web browser that <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a></p>
         </video>
         <script type="text/javascript" charset="utf-8">
         $(function(){
             // Helper function to Fill and Center the HTML5 Video
-            jQuery('video, object').maximage('maxcover');
+            jQuery('video').maximage('maxcover');
         });
         </script>
     </script>
@@ -132,13 +133,42 @@
     {% endraw %}
 
     <!-- jQuery -->
-    {% assets "js/jquery.min.js", "js/jquery-ui.min.js", "js/chute.jquery.js", "js/maximage-2.0.js", "js/pusher-2.1.6.min.js", "js/handlebars.min.js", "js/js-signals.min.js", "js/hasher.min.js", "js/bootstrap.min.js", "js/clean-blog.js" %}
+    {% assets "js/jquery.min.js", "js/jquery-ui.min.js", "js/chute.jquery.js", "js/maximage-2.0.js", "js/pusher-2.1.6.min.js", "js/handlebars.min.js", "js/js-signals.min.js", "js/hasher.min.js", "js/bootstrap.min.js", "js/clean-blog.js", "video-js/video.js" %}
         <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+    {% endassets %}
+
+    {% assets "video-js/video-js.swf" %}
+    <script>
+      videojs.options.flash.swf = "{{ ASSET_URL }}"
+    </script>
     {% endassets %}
 
     <script>
     'use strict';
     $(document).ready(function( ) {
+        var listen_to_pusher = function ( current_item, settings ) {
+            if ( settings.project !== null ) {
+                Pusher.host    = 'localhost'
+                Pusher.ws_port = 8080
+                Pusher.wss_port = 8080
+                var pusher = new Pusher('{{ pusher.PUSHER_KEY }}', { authEndpoint: chute_object.settings.CORE_SERVER_ENDPOINT + 'box/auth/pusher/'});
+                var pusher_channels = {
+                    'project': pusher.subscribe('presence-' + chute_object.project.slug ),
+                    'box': pusher.subscribe(chute_object.project.slug +'-{{ mac_addr }}'),
+                }
+
+                pusher_channels.project.bind('reload', function(data) {
+                  window.location.reload();
+                });
+                pusher_channels.box.bind('reload', function(data) {
+                  window.location.reload();
+                });
+                pusher_channels.box.bind('goto', function(data) {
+                  handleChanges( data.pk );
+                });
+            }
+        };
+
         var no_content_template = $("script#tpl-layout-no_content_template").html();
         var basic_template = $("script#tpl-layout-basic").html();
         var video_template = $("script#tpl-layout-video").html();
@@ -148,6 +178,7 @@
             'feed': {{ feed_json|safe }},
             'project': {{ project_json|safe }},
             'settings': {{ settings|safe }},
+            'listeners': [listen_to_pusher],
             'templates': {
                 'no_content': no_content_template,
                 'basic': basic_template,
@@ -156,28 +187,6 @@
                 'image': image_template,
             },
         };
-
-        if ( chute_object.project !== null ) {
-            Pusher.host    = 'localhost'
-            Pusher.ws_port = 8080
-            Pusher.wss_port = 8080
-            var pusher = new Pusher('{{ pusher.PUSHER_KEY }}', { authEndpoint: chute_object.settings.CORE_SERVER_ENDPOINT + 'box/auth/pusher/'});
-            var pusher_channels = {
-                'project': pusher.subscribe('presence-' + chute_object.project.slug ),
-                'box': pusher.subscribe(chute_object.project.slug +'-{{ mac_addr }}'),
-            }
-
-            pusher_channels.project.bind('reload', function(data) {
-              window.location.reload();
-            });
-            pusher_channels.box.bind('reload', function(data) {
-              window.location.reload();
-            });
-            pusher_channels.box.bind('goto', function(data) {
-              handleChanges( data.pk );
-            });
-        }
-
 
         $( "body" ).chute_controller(chute_object);
         window.chute = $( "body" ).data( 'chute-chute_controller' );

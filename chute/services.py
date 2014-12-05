@@ -32,22 +32,20 @@ class BoxApiService(object):
 
         return resp
 
-    def playlist(self, **kwargs):
-        store = kwargs.get('store', True)  # save the playlist locally
+    def update_playlist(self, **kwargs):
+        url = '%s%s' % (settings.CORE_SERVER_ENDPOINT,
+                        'box/%s/playlist/' % settings.MAC_ADDR)
 
-        if store is False:
-            data = json.loads(open(self.FEED_PATH, 'r').read())
-        else:
-            url = '%s%s' % (settings.CORE_SERVER_ENDPOINT,
-                            'box/%s/playlist/' % settings.MAC_ADDR)
+        resp = requests.get(url)
+        data = resp.json()
 
-            resp = requests.get(url)
-            data = resp.json()
-
-            with open(self.FEED_PATH, 'w') as playlist:
-                playlist.write(resp.content)
+        with open(self.FEED_PATH, 'w') as playlist:
+            playlist.write(resp.content)
 
         return data
+
+    def read_playlist(self, **kwargs):
+        return json.loads(open(self.FEED_PATH, 'r').read().decode('utf-8'))
 
 
 class ProcessFeedMediaService(object):

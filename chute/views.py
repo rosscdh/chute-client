@@ -18,11 +18,12 @@ import config as settings
 
 import json
 
+BOX_SERVICE = BoxApiService()
+
 
 class IndexView(FlaskView):
     def get(self):
-        s = BoxApiService()
-        playlist = s.playlist(store=False)
+        playlist = BOX_SERVICE.read_playlist()
 
         return render_template('player.html',
                 project_json=json.dumps(playlist.get('project', {})),
@@ -43,8 +44,7 @@ base_blueprint = Blueprint('base', __name__, template_folder='templates')
 
 class UpdatePlaylistEndpoint(restful.Resource):
     def post(self):
-        s = BoxApiService()
-        playlist = s.playlist(store=True)
+        BOX_SERVICE.update_playlist()
 
         return {
         }, 202
@@ -52,10 +52,9 @@ class UpdatePlaylistEndpoint(restful.Resource):
 
 class DownloadMediaEndpoint(restful.Resource):
     def post(self):
-        s = BoxApiService()
         data = request.json
 
-        job = get_queue().enqueue(download_feed, feed=s.FEED_PATH)
+        job = get_queue().enqueue(download_feed, feed=BOX_SERVICE.FEED_PATH)
 
         return {
             'job': {

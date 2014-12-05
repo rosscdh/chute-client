@@ -6,8 +6,8 @@ _basedir = os.path.abspath(os.path.dirname(__file__))
 
 DEBUG = True
 
-#CORE_SERVER = 'http://app.magnificent.de/'  # must have / at end
-CORE_SERVER = 'http://localhost:8000/'
+CORE_SERVER = 'http://app.magnificent.de/'  # must have / at end
+#CORE_SERVER = 'http://localhost:8000/'
 CORE_SERVER_ENDPOINT = '%sapi/v1/'  % CORE_SERVER  # must have / at end
 MAC_ADDR = get_mac()
 

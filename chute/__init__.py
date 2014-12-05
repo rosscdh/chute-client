@@ -13,9 +13,12 @@ from chute.views import IndexView
 app = Flask(__name__)
 app.config.from_object('config')
 
+
 ########################
 # Configure Secret Key #
 ########################
+
+
 def install_secret_key(app, filename='secret_key'):
     """Configure the SECRET_KEY from a file
     in the instance directory.

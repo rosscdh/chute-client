@@ -22,6 +22,7 @@ $(function() {
             'templates': undefined,
             'settings': undefined,
             'renderer': Handlebars || undefined,
+            'listeners': [],
 
             'target': $('div#content'),
 
@@ -56,7 +57,10 @@ $(function() {
         },
         _listen: function () {
             var self = this;
-            // setup pusher.com listeners and updaters here
+            $.each(this.options.listeners, function ( index, listener ) {
+                self.log('Listener: ' + index);
+                listener(self.current_feeditem, self.options);
+            });
 
         },
         timeout: function () {
