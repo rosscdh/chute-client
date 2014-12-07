@@ -28,6 +28,8 @@ class BoxApiService(object):
         }
         url = '%s%s' % (settings.CORE_SERVER_ENDPOINT,
                         'box/register/')
+        print(url)
+        print(data)
         resp = requests.post(url, data=data)
 
         return resp
