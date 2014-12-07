@@ -65,4 +65,3 @@ RQ(app)  # tasks
 @app.route('/media/<path:filename>')
 def media(filename):
     return send_from_directory(app.config['MEDIA_PATH'], filename)
-
