@@ -177,6 +177,7 @@
         var basic_template = $("script#tpl-layout-basic").html();
         var video_template = $("script#tpl-layout-video").html();
         var image_template = $("script#tpl-layout-image").html();
+        var image_left = $("script#tpl-layout-image").html();
 
         var chute_object = {
             'feed': {{ feed_json|safe }},
@@ -189,6 +190,7 @@
                 'video': video_template,
                 'video_full': video_template,
                 'image': image_template,
+                'image_left': image_left
             },
         };
 
