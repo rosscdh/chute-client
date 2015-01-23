@@ -4,6 +4,7 @@
 # common
 ############################################################
 sudo apt-get update -q
+sudo apt-get install -q -y nginx supervisor uwsgi
 sudo apt-get install -q -y vim make htop python-software-properties
 sudo apt-get install -q -y python python-dev python-pip
 sudo apt-get install -q -y build-essential python-setuptools python-dev apache2-utils uwsgi-plugin-python libjpeg8 libjpeg62-dev libfreetype6 libfreetype6-dev uwsgi-plugin-python
@@ -12,9 +13,10 @@ sudo apt-get install -q -y nmap htop vim unzip
 sudo easy_install pip
 sudo pip install virtualenv virtualenvwrapper
 
+VIRTUALENV_HOME=/var/apps
 
-echo "WORKON_HOME=$HOME/.virtualenvs" > $HOME/.bash_profile
-echo "source /usr/local/bin/virtualenvwrapper.sh" > $HOME/.bash_profile
+echo "export WORKON_HOME=$VIRTUALENV_HOME/.virtualenvs" >> $HOME/.bash_profile
+echo "source /usr/local/bin/virtualenvwrapper.sh" >> $HOME/.bash_profile
 source $HOME/.bash_profile
 mkdir -p $WORKON_HOME
 
