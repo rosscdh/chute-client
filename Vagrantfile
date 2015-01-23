@@ -12,6 +12,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
 
     config.vm.network "forwarded_port", guest: 5000, host: 5000
-    config.vm.synced_folder ".", "/home/vagrant/chute-client"
+    config.vm.network "forwarded_port", guest: 80, host: 5080
+    config.vm.synced_folder ".", "/var/apps/chute-client/versions/chute-client"
+    config.vm.synced_folder "../conf", "/home/vagrant/conf"
 end
 
