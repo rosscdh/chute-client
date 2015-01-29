@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -12,6 +10,9 @@
     <title>&nbsp;</title>
 
     {% assets "css/bootstrap.min.css", "css/clean-blog.css", "video-js/video-js.min.css" %}
+        <link href="{{ ASSET_URL }}" rel="stylesheet" />
+    {% endassets %}
+    {% assets "nprogress-0.1.6/nprogress.css", "simpleWeather-3.0.2/simpleWeather.css" %}
         <link href="{{ ASSET_URL }}" rel="stylesheet" />
     {% endassets %}
     <style>
@@ -28,9 +29,9 @@
             /*position:relative !important;
         }*/
 
-.post-heading h1[data-name=name], .post-heading h2{
-  color:#000;
-}
+        .post-heading h1[data-name=name], .post-heading h2{
+          color:#000;
+        }
         h1, h2 {
             background:white;
             background-color:rgba(255, 255, 255, 0.8);
@@ -61,11 +62,20 @@
 
 <body>
 
+    <div id="weather" class="weather"></div>
+
     <!-- Main Content Page -->
     <div id="content" class="container-fluid"></div>
 
     <!-- Page Templates -->
     {% raw %}
+    <script id="tpl-weather" type="text/x-handlebars-template">
+        <h2><i class="icon-{{ weather.code }}"></i> {{ weather.temp }}&deg;{{ weather.units.temp }}</h2>
+        <ul><li>{{ weather.city }}, {{ weather.region }}</li>
+        <li class="currently">{{ weather.currently }}</li>
+        <li>{{ weather.wind.direction }} {{ weather.wind.speed }} {{ weather.units.speed }}</li></ul>
+    </script>
+
     <script id="tpl-layout-no_content_template" type="text/x-handlebars-template">
         <header class="intro-header">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
@@ -147,6 +157,10 @@
     </script>
     {% endassets %}
 
+    {% assets "nprogress-0.1.6/nprogress.js", "simpleWeather-3.0.2/jquery.simpleWeather.min.js" %}
+        <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+    {% endassets %}
+
     <script>
     'use strict';
     $(document).ready(function( ) {
@@ -173,11 +187,14 @@
             }
         };
 
+        // Templates
         var no_content_template = $("script#tpl-layout-no_content_template").html();
         var basic_template = $("script#tpl-layout-basic").html();
         var video_template = $("script#tpl-layout-video").html();
         var image_template = $("script#tpl-layout-image").html();
         var image_left = $("script#tpl-layout-image").html();
+        // Weather template
+        var weather_tpl = $("script#tpl-weather").html();
 
         var chute_object = {
             'feed': {{ feed_json|safe }},
@@ -209,6 +226,37 @@
         hasher.initialized.add(handleChanges); //add initialized listener (to grab initial value in case it is already set)
         hasher.init(); //initialize hasher (start listening for history changes)
 
+        /**
+        * Progress Bar Handler
+        */
+        $( 'body' ).on( 'start_progress', function( event, num_seconds ) {
+            console.log('on.start_progress:' + num_seconds);
+            var minimum_increment = Math.round($('body').width() / num_seconds);
+            console.log('on.start_progress minimum_increment:' + minimum_increment);
+            NProgress.configure({ minimum: 0.1 });
+            NProgress.start();
+        });
+        $( 'body' ).on( 'end_progress', function( event ) {
+            console.log('on.end_progress');
+            NProgress.done();
+        });
+        /**
+        * Weather display handler
+        */
+        $.simpleWeather({
+            location: 'Austin, TX',
+            woeid: '',
+            unit: 'c',
+            success: function( data ) {
+                var weather_html = window.chute.options.renderer.compile( weather_tpl );
+                var html = weather_html(data);
+                console.log(data);
+                $("#weather").html(html);
+            },
+            error: function(error) {
+                $("#weather").html('<p>{{ error }}</p>');
+            }
+          });
     });
     </script>
 </body>

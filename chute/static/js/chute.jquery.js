@@ -64,7 +64,7 @@ $(function() {
 
         },
         timeout: function () {
-            var timeout_in = (this.wait_for * 1000)
+            var timeout_in = (this.wait_for * 1000);
             this.log('Timeout set to: ' + timeout_in);
             return timeout_in;
         },
@@ -79,6 +79,7 @@ $(function() {
 
                 self.timer = window.setTimeout( function () {
                     // when it expires call next
+                    $( 'body' ).trigger( 'end_progress', [] );
                     self.next();
                 }, self.timeout());
             }
@@ -164,6 +165,7 @@ $(function() {
             this.log(context);
             this.log(html);
             target.html( html );
+            $( 'body' ).trigger( 'start_progress', [ this.wait_for ] );
         },
         goto: function ( pk ) {
             var self = this;
