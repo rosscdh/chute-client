@@ -243,20 +243,22 @@
         /**
         * Weather display handler
         */
-        $.simpleWeather({
-            location: 'Austin, TX',
-            woeid: '',
-            unit: 'c',
-            success: function( data ) {
-                var weather_html = window.chute.options.renderer.compile( weather_tpl );
-                var html = weather_html(data);
-                console.log(data);
-                $("#weather").html(html);
-            },
-            error: function(error) {
-                $("#weather").html('<p>{{ error }}</p>');
-            }
-          });
+        $( 'body' ).on( 'start_progress', function( event, num_seconds ) {
+            $.simpleWeather({
+                location: 'Mönchengladbach, NRW, DE',
+                woeid: '',
+                unit: 'c',
+                success: function( data ) {
+                    var weather_html = window.chute.options.renderer.compile( weather_tpl );
+                    var html = weather_html({'weather': data});
+                    console.log(data);
+                    $("#weather").html(html);
+                },
+                error: function(error) {
+                    $("#weather").html('<p>{{ error }}</p>');
+                }
+            });
+        });
     });
     </script>
 </body>

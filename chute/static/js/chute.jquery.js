@@ -54,6 +54,9 @@ $(function() {
 
             this._listen();
             this._begin();
+            // @TODO move this to a more logical place
+            // reload it after every 10? items shown
+            $( 'body' ).trigger( 'chute.begin', [ this ] );
         },
         _listen: function () {
             var self = this;
