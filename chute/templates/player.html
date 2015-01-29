@@ -61,7 +61,7 @@
 </head>
 
 <body>
-
+    <div id="progress"></div>
     <div id="weather" class="weather"></div>
 
     <!-- Main Content Page -->
@@ -229,9 +229,23 @@
         */
         $( 'body' ).on( 'start_progress', function( event, num_seconds ) {
             console.log('on.start_progress:' + num_seconds);
-            var minimum_increment = Math.round($('body').width() / num_seconds);
-            console.log('on.start_progress minimum_increment:' + minimum_increment);
-            NProgress.configure({ minimum: 0.1 });
+            var window_width = $('body').width();
+            var speed = num_seconds/window_width/1000;
+            console.log('on.start_progress speed:' + speed);
+            var minimum = window_width/num_seconds / 1000;
+            console.log('on.start_progress minimum:' + minimum);
+            var trickleRate = (Math.ceil(window_width/num_seconds)/10000) * 1.9;
+            console.log('on.start_progress trickleRate:' + trickleRate);
+            var trickleSpeed = 100;
+            console.log('on.start_progress trickleSpeed:' + trickleSpeed);
+
+            NProgress.configure({
+                'speed': speed,
+                'minimum': minimum,
+                'trickleRate': trickleRate,
+                'trickleSpeed': trickleSpeed,
+                'showSpinner': false
+            });
             NProgress.start();
         });
         $( 'body' ).on( 'end_progress', function( event ) {
@@ -241,7 +255,7 @@
         /**
         * Weather display handler
         */
-        //$( 'body' ).on( 'chute.begin', function( event ) {
+        $( 'body' ).on( 'chute.begin', function( event ) {
             console.log('on.chute.begin:');
             $.simpleWeather({
                 location: 'Mönchengladbach, NRW, DE',
@@ -257,7 +271,7 @@
                     $("#weather").html('<p>{{ error }}</p>');
                 }
             });
-        //});
+        });
 
         $( "body" ).chute_controller(chute_object);
         window.chute = $( "body" ).data( 'chute-chute_controller' );
