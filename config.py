@@ -17,8 +17,4 @@ PUSHER_KEY = 'cf7fc048e21bd39e6f82'
 PUSHER_SECRET = '01d612aade08edc9dfde'
 
 STATIC_PATH = os.path.join(_basedir, 'static')
-
-if PROJECT_ENV is 'dev':
-    MEDIA_PATH = os.path.join(_basedir, '../', 'media')
-else:
-    MEDIA_PATH = os.path.join(_basedir, '../../', 'media')
+MEDIA_PATH = os.path.join(_basedir, '../../', 'media')
