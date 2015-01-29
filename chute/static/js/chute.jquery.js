@@ -53,6 +53,7 @@ $(function() {
             }
 
             this._listen();
+            $( 'body' ).trigger( 'start_progress', [ this.wait_for ] );
             this._begin();
         },
         _listen: function () {
@@ -166,10 +167,10 @@ $(function() {
             };
 
             var html = compiled( context );
-            this.log(context);
-            this.log(html);
-            target.html( html );
+            //this.log(context);
+            //this.log(html);
             $( 'body' ).trigger( 'start_progress', [ this.wait_for ] );
+            target.html( html );
         },
         goto: function ( pk ) {
             var self = this;

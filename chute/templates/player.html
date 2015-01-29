@@ -212,9 +212,6 @@
             },
         };
 
-        $( "body" ).chute_controller(chute_object);
-        window.chute = $( "body" ).data( 'chute-chute_controller' );
-
         //handle hash changes
         function handleChanges( newPk ){
             if ( newPk !== NaN && newPk !== '' ) {
@@ -261,6 +258,9 @@
                 }
             });
         //});
+
+        $( "body" ).chute_controller(chute_object);
+        window.chute = $( "body" ).data( 'chute-chute_controller' );
     });
     </script>
 </body>
