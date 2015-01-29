@@ -70,10 +70,11 @@
     <!-- Page Templates -->
     {% raw %}
     <script id="tpl-weather" type="text/x-handlebars-template">
-        <h2><i class="icon-{{ weather.code }}"></i> {{ weather.temp }}&deg;{{ weather.units.temp }}</h2>
-        <ul><li>{{ weather.city }}, {{ weather.region }}</li>
-        <li class="currently">{{ weather.currently }}</li>
-        <li>{{ weather.wind.direction }} {{ weather.wind.speed }} {{ weather.units.speed }}</li></ul>
+        <h2>
+        <i class="weather-symbol icon-{{ weather.code }}"></i>
+        <span class="weather-seperator weather-time">{{ time }}</span>
+        <span class="weather-seperator weather-text">{{ weather.temp }}&deg;{{ weather.units.temp }}</span>
+        </h2>
     </script>
 
     <script id="tpl-layout-no_content_template" type="text/x-handlebars-template">
@@ -243,14 +244,15 @@
         /**
         * Weather display handler
         */
-        $( 'body' ).on( 'start_progress', function( event, num_seconds ) {
+        //$( 'body' ).on( 'chute.begin', function( event ) {
+            console.log('on.chute.begin:');
             $.simpleWeather({
                 location: 'Mönchengladbach, NRW, DE',
                 woeid: '',
                 unit: 'c',
                 success: function( data ) {
                     var weather_html = window.chute.options.renderer.compile( weather_tpl );
-                    var html = weather_html({'weather': data});
+                    var html = weather_html({'weather': data, 'time': 'test'});
                     console.log(data);
                     $("#weather").html(html);
                 },
@@ -258,7 +260,7 @@
                     $("#weather").html('<p>{{ error }}</p>');
                 }
             });
-        });
+        //});
     });
     </script>
 </body>
