@@ -72,7 +72,7 @@
     <script id="tpl-weather" type="text/x-handlebars-template">
         <h2>
         <i class="weather-symbol icon-{{ weather.code }}"></i>
-        <span class="weather-seperator weather-time">{{ time }}</span>
+        <span id="moment_in_time" class="weather-seperator weather-time">{{ time }}</span>
         <span class="weather-seperator weather-text">{{ weather.temp }}&deg;{{ weather.units.temp }}</span>
         </h2>
     </script>
@@ -158,7 +158,7 @@
     </script>
     {% endassets %}
 
-    {% assets "nprogress-0.1.6/nprogress.js", "simpleWeather-3.0.2/jquery.simpleWeather.min.js" %}
+    {% assets "nprogress-0.1.6/nprogress.js", "simpleWeather-3.0.2/jquery.simpleWeather.min.js", "momentjs-2.9.0/momentjs.lang.min.js" %}
         <script type="text/javascript" src="{{ ASSET_URL }}"></script>
     {% endassets %}
 
@@ -237,7 +237,9 @@
             console.log('on.start_progress inc_amount:' + inc_amount);
 
             NProgress.configure({
-                'trickle': false,
+                'trickle': true,
+                'trickleRate': 0.02,
+                'trickleSpeed': 1000,
                 'showSpinner': false
             });
 
@@ -249,12 +251,23 @@
                 var set_percentage = current_second / num_seconds;
                 //console.log('Percent:' + set_percentage);
                 NProgress.set(set_percentage);
+                //NProgress.inc(inc_amount);
             };
             var n_progress = window.setInterval(n_progress_tick, 1000);
         });
+
+        // Date and Time
+        moment.locale('de');
+        var moment_in_time = function () {
+            var now = moment().format("llll");
+            $('#moment_in_time').html(now);
+            return now;
+        }
+        var a_moment_in_time = window.setInterval(moment_in_time, 1000);
+
         $( 'body' ).on( 'end_progress', function( event ) {
             //console.log('on.end_progress');
-            //NProgress.done();
+            NProgress.done();
         });
         /**
         * Weather display handler
@@ -267,7 +280,7 @@
                 unit: 'c',
                 success: function( data ) {
                     var weather_html = window.chute.options.renderer.compile( weather_tpl );
-                    var html = weather_html({'weather': data, 'time': 'test'});
+                    var html = weather_html({'weather': data, 'time': moment_in_time()});
                     console.log(data);
                     $("#weather").html(html);
                 },

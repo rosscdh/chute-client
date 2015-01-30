@@ -68,8 +68,8 @@ body {
 }
 #weather h2 .weather-time {
   float:left;
-  font-size:0.7em;
-  font-weight:20;
+  font-size:0.6em;
+  font-weight:10;
   text-align:left;
   width:110px;
 }
