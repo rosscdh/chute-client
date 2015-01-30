@@ -228,29 +228,33 @@
         * Progress Bar Handler
         */
         $( 'body' ).on( 'start_progress', function( event, num_seconds ) {
-            console.log('on.start_progress:' + num_seconds);
+            console.log('on.start_progress num_seconds:' + num_seconds);
+
+            var current_second = 1;
             var window_width = $('body').width();
-            var speed = num_seconds/window_width/1000;
-            console.log('on.start_progress speed:' + speed);
-            var minimum = window_width/num_seconds / 1000;
-            console.log('on.start_progress minimum:' + minimum);
-            var trickleRate = (Math.ceil(window_width/num_seconds)/10000) * 1.9;
-            console.log('on.start_progress trickleRate:' + trickleRate);
-            var trickleSpeed = 100;
-            console.log('on.start_progress trickleSpeed:' + trickleSpeed);
+
+            var inc_amount = (1/num_seconds);
+            console.log('on.start_progress inc_amount:' + inc_amount);
 
             NProgress.configure({
-                'speed': speed,
-                'minimum': minimum,
-                'trickleRate': trickleRate,
-                'trickleSpeed': trickleSpeed,
+                'trickle': false,
                 'showSpinner': false
             });
-            NProgress.start();
+
+            var n_progress_tick = function () {
+                current_second++;
+                if ( current_second >= num_seconds ) {
+                    window.clearInterval(n_progress);
+                }
+                var set_percentage = current_second / num_seconds;
+                //console.log('Percent:' + set_percentage);
+                NProgress.set(set_percentage);
+            };
+            var n_progress = window.setInterval(n_progress_tick, 1000);
         });
         $( 'body' ).on( 'end_progress', function( event ) {
-            console.log('on.end_progress');
-            NProgress.done();
+            //console.log('on.end_progress');
+            //NProgress.done();
         });
         /**
         * Weather display handler
