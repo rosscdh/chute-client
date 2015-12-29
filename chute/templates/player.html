@@ -50,6 +50,7 @@
 </head>
 
 <body>
+    <div id="weather" class="weather"></div>
 
     <!-- Main Content Page -->
     <div id="content" class="container-fluid"></div>
@@ -105,7 +106,7 @@
     {% endraw %}
 
     <!-- jQuery -->
-    {% assets "js/jquery.min.js", "js/jquery-ui.min.js", "js/chute.jquery.js", "js/maximage-2.0.js", "js/pusher-2.1.6.min.js", "js/handlebars.min.js", "js/js-signals.min.js", "js/hasher.min.js", "js/bootstrap.min.js", "js/clean-blog.js", "video-js/video.js" %}
+    {% assets "js/jquery.min.js", "js/jquery-ui.min.js", "js/chute.jquery.js", "js/maximage-2.0.js", "js/pusher-2.1.6.min.js", "js/handlebars.min.js", "js/js-signals.min.js", "js/hasher.min.js", "js/bootstrap.min.js", "js/clean-blog.js", "video-js/video.js", "js/URI.min.js" %}
         <script type="text/javascript" src="{{ ASSET_URL }}"></script>
     {% endassets %}
 
@@ -121,9 +122,6 @@
 
     <script>
     'use strict';
-
-    window.BV = new $.BigVideo();
-    window.BV.init();
 
     $(document).ready(function( ) {
         var listen_to_pusher = function ( current_item, settings ) {
@@ -197,6 +195,9 @@
         $( 'body' ).on( 'start_progress', function( event, num_seconds, feed_item ) {
             // console.log('on.start_progress num_seconds:' + num_seconds);
             // console.log(feed_item)
+            window.BV = new $.BigVideo();
+            window.BV.init();
+
             var current_second = 1;
             var window_width = $('body').width();
 
@@ -228,6 +229,7 @@
                     { type: "video/mp4",  src: feed_item.video },
                 ], {ambient: true});
             } else {
+                console.log(feed_item.picture);
                 window.BV.show(feed_item.picture);
             }
 

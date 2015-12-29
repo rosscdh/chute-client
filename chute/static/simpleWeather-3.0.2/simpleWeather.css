@@ -44,14 +44,13 @@ body {
   -moz-border-radius: 0px 0px 0px 10px;
   border-radius: 0px 0px 0px 10px;
   text-shadow: 0px 1px 3px rgba(0, 0, 0, 0.15);
-  background-color:#3d3d3d;
+  background-color:rgba(61, 61, 61, 0.7);
 }
 
 #weather h2 {
   margin: 0px;
   padding: 5px 0px 0px 0px;
   color: #fff;
-  background-color:#3d3d3d;
 }
 
 #weather h2 .weather-symbol {

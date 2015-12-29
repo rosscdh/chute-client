@@ -8,6 +8,7 @@ import config as settings
 
 import os
 import json
+import urllib2
 import requests
 
 
@@ -87,7 +88,8 @@ class DownloadMediaService(object):
     def process(self, **kwargs):
         video_url = kwargs.pop('video_url', self.video.get('url'))
 
-        filename = os.path.basename(video_url)
+        #filename = os.path.basename(video_url)
+        filename = os.path.basename(urllib2.urlparse.urlparse(video_url).path)
         file_path = os.path.join(settings.MEDIA_PATH, filename)
 
         message = 'File already exists: %s' % filename

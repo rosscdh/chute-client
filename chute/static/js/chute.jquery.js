@@ -105,8 +105,8 @@ $(function() {
                 return {'is_present': false, 'filename': null};
             }
 
-            var pic = feed_item.picture.split('/');
-            var pic_filename = pic[pic.length - 1]
+            var url = new URI(feed_item.picture);
+            var pic_filename = url.filename();
 
             $.ajax({
                 type: "HEAD",
@@ -128,8 +128,8 @@ $(function() {
                 return {'is_present': false, 'filename': null};
             }
 
-            var vid = feed_item.video.split('/');
-            var vid_filename = vid[vid.length - 1]
+            var url = new URI(feed_item.video);
+            var vid_filename = url.filename();
 
             $.ajax({
                 type: "HEAD",
