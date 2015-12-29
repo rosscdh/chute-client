@@ -7,7 +7,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     config.vm.network "private_network", ip: "192.168.33.11"
 
-    # config.vm.provision "shell", path: "../conf/provision.sh"
+    # config.vm.provision "shell", path: "./provision.sh"
 
     config.vm.provider "virtualbox" do |vb, override|
         vb.customize ["modifyvm", :id, "--memory", "1024"]
