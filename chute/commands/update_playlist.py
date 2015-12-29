@@ -10,5 +10,6 @@ class UpdatePlaylist(Command):
         """
         s = BoxApiService()
         resp = s.update_playlist()
-        s.download_feed()
         print(resp)
+        s.download_feed()
+
