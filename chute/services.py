@@ -40,11 +40,15 @@ class BoxApiService(object):
 
         resp = requests.get(url)
         data = resp.json()
-
+        #print self.FEED_PATH
         with open(self.FEED_PATH, 'w') as playlist:
             playlist.write(resp.content)
 
         return data
+
+    def download_feed(self, **kwargs):
+        s = ProcessFeedMediaService(feed=open(kwargs.get('feed', self.FEED_PATH), 'r'))
+        return s.process()
 
     def read_playlist(self, **kwargs):
         return json.loads(open(self.FEED_PATH, 'r').read().decode('utf-8'))

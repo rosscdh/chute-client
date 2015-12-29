@@ -1,5 +1,5 @@
 *.pyc
-chute/media/*
+media/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

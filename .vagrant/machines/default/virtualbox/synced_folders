@@ -1,0 +1,1 @@
+{"virtualbox":{"/var/apps/chute-client/versions/chute-client":{"guestpath":"/var/apps/chute-client/versions/chute-client","hostpath":"/Users/rosscdh/p/chute/chute-client","disabled":false},"/home/vagrant/conf":{"guestpath":"/home/vagrant/conf","hostpath":"/Users/rosscdh/p/chute/conf","disabled":false}}}

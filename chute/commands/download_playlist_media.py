@@ -2,13 +2,13 @@
 from flask.ext.script import Command, Option
 
 from ..services import BoxApiService
+from ..tasks import download_feed
+
+BOX_SERVICE = BoxApiService()
 
 
-class UpdatePlaylist(Command):
+class DownloadPlaylistMedia(Command):
     def run(self, **kwargs):
         """
         """
-        s = BoxApiService()
-        resp = s.update_playlist()
-        s.download_feed()
-        print(resp)
+        download_feed(feed=BOX_SERVICE.FEED_PATH)

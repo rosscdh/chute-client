@@ -6,6 +6,7 @@ from flask.ext.rq import RQ
 from flask.ext.assets import Environment
 from flask import Flask, render_template, send_from_directory
 
+
 from chute.views import base_blueprint
 from chute.views import blueprint as api_blueprint
 from chute.views import IndexView

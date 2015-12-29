@@ -18,5 +18,7 @@ class Register(Command):
         """
         """
         s = BoxApiService()
-        resp = s.register(**kwargs)
-        print(resp.content)
+        s.register(**kwargs)
+        s.update_playlist()
+        s.download_feed()
+
