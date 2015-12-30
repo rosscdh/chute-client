@@ -15,7 +15,7 @@ audit:
 	python setup.py audit
 
 release:
-	python scripts/make-release.py
+	git archive --format zip --output "/Users/rosscdh/p/chute/ansible-raspberry-pi/new-raspberry/roles/chute_client/files/chute-client.zip" master
 
 ext-test:
 	python tests/flaskext_test.py --browse
