@@ -7,8 +7,8 @@ _basedir = os.path.abspath(os.path.dirname(__file__))
 DEBUG = True
 PROJECT_ENV = 'dev'
 
-CORE_SERVER = 'http://magnificent.de/'  # must have / at end
-CORE_SERVER_ENDPOINT = '%sapi/v1/' % CORE_SERVER  # must have / at end
+CORE_SERVER = 'http://magnificent.de'  # must have / at end
+CORE_SERVER_ENDPOINT = '%s/api/v1/' % CORE_SERVER  # must have / at end
 MAC_ADDR = get_mac()
 
 PUSHER_APP_ID = 79947
