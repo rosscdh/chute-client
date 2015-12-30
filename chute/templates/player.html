@@ -55,9 +55,6 @@
     <!-- Main Content Page -->
     <div id="content" class="container-fluid"></div>
 
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/FitText.js/1.2.0/jquery.fittext.min.js"></script>
-
     <!-- Page Templates -->
     {% raw %}
     <script id="tpl-weather" type="text/x-handlebars-template">
@@ -80,10 +77,14 @@
     </script>
 
     <script id="tpl-layout-basic" type="text/x-handlebars-template">
+        {{# if object.name }}
+        {{# if object.description }}
         <div id="content-markup">
-            <h1>{{ object.name }}<br/><small>{{ object.message }}</small></h1>
+            <h1>{{ object.name }}{{# if object.message }}<br/><small>{{ object.message }}</small>{{/if}}</h1>
             <p>{{ object.description }}</p>
         </div>
+        {{/if}}
+        {{/if}}
     </script>
 
     <script id="tpl-layout-video" type="text/x-handlebars-template">
@@ -106,7 +107,7 @@
     {% endraw %}
 
     <!-- jQuery -->
-    {% assets "js/jquery.min.js", "js/jquery-ui.min.js", "js/chute.jquery.js", "js/maximage-2.0.js", "js/pusher-2.1.6.min.js", "js/handlebars.min.js", "js/js-signals.min.js", "js/hasher.min.js", "js/bootstrap.min.js", "js/clean-blog.js", "video-js/video.js", "js/URI.min.js" %}
+    {% assets "js/jquery.min.js", "js/jquery-ui.min.js", "js/chute.jquery.js", "js/jquery.fittext.min.js", "js/pusher-2.1.6.min.js", "js/handlebars.min.js", "js/js-signals.min.js", "js/hasher.min.js", "js/bootstrap.min.js", "js/clean-blog.js", "video-js/video.js", "js/URI.min.js" %}
         <script type="text/javascript" src="{{ ASSET_URL }}"></script>
     {% endassets %}
 
@@ -225,6 +226,7 @@
 
 
             if (feed_item.video !== null) {
+                console.log(feed_item.video);
                 window.BV.show([
                     { type: "video/mp4",  src: feed_item.video },
                 ], {ambient: true});

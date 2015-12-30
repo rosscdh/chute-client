@@ -10,6 +10,7 @@ import os
 import json
 import urllib2
 import requests
+import subprocess
 
 
 class BoxApiService(object):
@@ -41,7 +42,7 @@ class BoxApiService(object):
 
         resp = requests.get(url)
         data = resp.json()
-        #print self.FEED_PATH
+
         with open(self.FEED_PATH, 'w') as playlist:
             playlist.write(resp.content)
 
@@ -53,6 +54,18 @@ class BoxApiService(object):
 
     def read_playlist(self, **kwargs):
         return json.loads(open(self.FEED_PATH, 'r').read().decode('utf-8'))
+
+    def convert_mov_to_mp4(self, **kwargs):
+        options = {
+            'media_path': settings.MEDIA_PATH,
+            'from_format': kwargs.get('from_format', 'mov'),
+            'to_format': kwargs.get('to_format', 'mp4'),
+            'codec': kwargs.get('codec', 'libx264'),
+            'threads': kwargs.get('threads', 2),
+            'cpu': kwargs.get('cpu', 2),
+        }
+        cmd = "find {media_path} -name '*.{from_format}' -exec bash -c 'avconv -i \"$0\" -c:v {codec} -strict experimental -cpu-used {cpu} -threads {threads} \"${{0%%.{from_format}}}.{to_format}\"' {{}} \\;".format(**options)
+        return subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE).stdout.read()
 
 
 class ProcessFeedMediaService(object):
@@ -88,13 +101,11 @@ class DownloadMediaService(object):
     def process(self, **kwargs):
         video_url = kwargs.pop('video_url', self.video.get('url'))
 
-        #filename = os.path.basename(video_url)
         filename = os.path.basename(urllib2.urlparse.urlparse(video_url).path)
         file_path = os.path.join(settings.MEDIA_PATH, filename)
 
         message = 'File already exists: %s' % filename
 
-        #if not os.path.exists(file_path):
         try:
             self.save(video_url, file_path)
             message = 'File downloaded: %s' % filename
@@ -102,11 +113,9 @@ class DownloadMediaService(object):
         except Exception as e:
             message = 'File not downloaded: %s' % e
 
-        #logger.info('%s : %s ' % (file_path, message))
         return file_path, message
 
     def save(self, video_url, file_path):
-        #logger.debug('Saving %s to %s' % (video_url, file_path))
         with open(file_path, 'wb') as handle:
             resp = requests.get(video_url, stream=True)
 

@@ -9,7 +9,7 @@ sudo apt-get install -q -y python python-dev python-pip
 sudo apt-get install -q -y build-essential python-setuptools python-dev apache2-utils uwsgi-plugin-python libjpeg8 libjpeg62-dev libfreetype6 libfreetype6-dev uwsgi-plugin-python
 sudo apt-get install -q -y git-core libxml2-dev libxslt1-dev
 sudo apt-get install -q -y nmap htop vim unzip
-sudo apt-get install -q -y nginx-full supervisor uwsgi
+sudo apt-get install -q -y nginx-extras supervisor uwsgi
 sudo apt-get install -q -y ffmpeg libav-tools libavcodec-extra-53
 sudo easy_install pip
 sudo pip install virtualenv virtualenvwrapper
