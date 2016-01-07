@@ -1,20 +1,20 @@
 # -*- coding: utf-8 -*-
 from newspaper import Article as NewsPaperArticle
 
-# import html2text    # convert html to text
-# html2text.BODY_WIDTH = 0  # prevent random new lines all over the show: http://stackoverflow.com/questions/12839143/python-html2text-adds-random-n
+import html2text    # convert html to text
+html2text.BODY_WIDTH = 0  # prevent random new lines all over the show: http://stackoverflow.com/questions/12839143/python-html2text-adds-random-n
 # import markdown2    # convert text to html
 
 
-# class NewsArticleMixin(object):
-#     """
-#     Allow capability to extract article images
-#     """
-#     def html_to_markdown(self, content):
-#         """
-#         convert html text to markdown
-#         """
-#         return html2text.html2text(content, bodywidth=0)
+class NewsArticleMixin(object):
+    """
+    Allow capability to extract article images
+    """
+    def html_to_markdown(self, content):
+        """
+        convert html text to markdown
+        """
+        return html2text.html2text(content, bodywidth=0)
 
 #     def markdown_to_html(self, markdown):
 #         """

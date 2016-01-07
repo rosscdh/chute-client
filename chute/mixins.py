@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import config as settings
 
-from .article import Article
+from .article import Article, NewsArticleMixin
 
 import HTMLParser
 import feedparser
@@ -43,7 +43,7 @@ htmlParser = HTMLParser.HTMLParser()
 # }
 
 
-class RssReaderMixin(object):
+class RssReaderMixin(NewsArticleMixin, object):
     """
     Mixin to talk with rss feeds
     """
@@ -99,7 +99,7 @@ class RssReaderMixin(object):
             #print item
 
             tags = [t.get('term') for t in item.get('tags')]
-            summary_detail = htmlParser.unescape(unicode(item.get('summary_detail').get('value')))
+            summary_detail = self.html_to_markdown(content=unicode(item.get('summary_detail').get('value')))
             title = htmlParser.unescape(unicode(item.get('title')))
 
             try:
@@ -114,7 +114,7 @@ class RssReaderMixin(object):
                     "pk": item.id,
                     "name": title,
                     "message": summary_detail,
-                    "description": htmlParser.unescape(unicode(item.summary)),
+                    "description": summary_detail,
                     "picture": image,
                     "video": None,
                     "video_transcode_status": None,
