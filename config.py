@@ -12,6 +12,8 @@ CORE_SERVER_ENDPOINT = '%s/api/v1/' % CORE_SERVER  # must have / at end
 MAC_ADDR = get_mac()
 
 WORDPRESS_RSS_BASE_URL = 'http://www.framebuilder.de' # MUST NOT have a /
+WORDPRESS_RSS_CATEGORY = None
+WORDPRESS_RSS_NUM_ITEMS = 100
 
 PUSHER_APP_ID = 79947
 PUSHER_KEY = 'cf7fc048e21bd39e6f82'

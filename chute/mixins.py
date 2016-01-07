@@ -69,8 +69,8 @@ class RssReaderMixin(object):
         return template if template else 'basic'
 
     def get_rss_from_wordpress(self, **kwargs):
-        category = kwargs.get('category', None)
-        number_of_items = kwargs.get('number_of_items', 100)
+        category = kwargs.get('category', getattr(settings, 'WORDPRESS_RSS_CATEGORY', None))
+        number_of_items = kwargs.get('number_of_items', getattr(settings, 'WORDPRESS_RSS_NUM_ITEMS', 100))
 
         feed_url = getattr(
             settings,
