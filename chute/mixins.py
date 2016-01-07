@@ -97,10 +97,11 @@ class RssReaderMixin(object):
             #print item
 
             tags = [t.get('term') for t in item.get('tags')]
-            summary_detail = unicode(item.get('summary_detail').get('value'))
-            title = unicode(item.get('title'))
+            summary_detail = htmlParser.unescape(unicode(item.get('summary_detail').get('value')))
+            title = htmlParser.unescape(unicode(item.get('title')))
+
             try:
-                images = self.extract_images_from_content(content=unicode(h.unescape(item.content[0].value)))
+                images = self.extract_images_from_content(content=unicode(item.content[0].value))
                 image = images[0]
             except:
                 images = []
@@ -109,9 +110,9 @@ class RssReaderMixin(object):
             try:
                 rss_item = {
                     "pk": item.id,
-                    "name": unicode(item.title),
+                    "name": title,
                     "message": summary_detail,
-                    "description": item.summary,
+                    "description": htmlParser.unescape(unicode(item.summary)),
                     "picture": image,
                     "video": None,
                     "video_transcode_status": None,
