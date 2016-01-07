@@ -9,3 +9,7 @@ Flask-WTF
 Flask-Assets
 requests
 qtfaststart
+feedparser
+qrcode
+arrow
+newspaper

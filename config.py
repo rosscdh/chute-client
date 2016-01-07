@@ -11,6 +11,8 @@ CORE_SERVER = 'http://magnificent.de'  # must have / at end
 CORE_SERVER_ENDPOINT = '%s/api/v1/' % CORE_SERVER  # must have / at end
 MAC_ADDR = get_mac()
 
+WORDPRESS_RSS_BASE_URL = 'http://www.framebuilder.de' # MUST NOT have a /
+
 PUSHER_APP_ID = 79947
 PUSHER_KEY = 'cf7fc048e21bd39e6f82'
 PUSHER_SECRET = '01d612aade08edc9dfde'

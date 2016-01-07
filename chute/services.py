@@ -6,19 +6,35 @@ Services to
 """
 import config as settings
 
+from collections import Counter
+
+from .mixins import RssReaderMixin
+
 import os
+import re
 import json
 import urllib2
 import requests
 import subprocess
 
 
-class BoxApiService(object):
+class BoxApiService(RssReaderMixin, object):
     """
     Service registers this box/client with the core server
     """
     FEED_PATH = os.path.join(settings.MEDIA_PATH, 'playlist.json')
     MAC_ADDRESS = settings.MAC_ADDR
+
+    def calculate_wait_for(self, corpus):
+        """
+        Method to calculate the amount of time to display this item, based on
+        150 wpm (floor avg reading speed) * 1.5
+        """
+        words = re.findall(r'\w+', corpus.lower())
+        count = Counter(words)
+        total = count.values()
+        base = (150 / sum(total))
+        return (150 / base) if base > 0 else 30
 
     def register(self, **kwargs):
         project_slug = kwargs.get('project', None)  # project_slug to register with
@@ -37,14 +53,22 @@ class BoxApiService(object):
         return resp
 
     def update_playlist(self, **kwargs):
-        url = '%s%s' % (settings.CORE_SERVER_ENDPOINT,
-                        'box/%s/playlist/' % settings.MAC_ADDR)
+        content = kwargs.get('content', None)
 
-        resp = requests.get(url)
-        data = resp.json()
+        if content is not None:
+            data = json.loads(content)
+
+        else:
+            # we have no content passed in then get it form teh playlist server
+            url = '%s%s' % (settings.CORE_SERVER_ENDPOINT,
+                            'box/%s/playlist/' % settings.MAC_ADDR)
+
+            resp = requests.get(url)
+            data = resp.json()
+            content = resp.content
 
         with open(self.FEED_PATH, 'w') as playlist:
-            playlist.write(resp.content)
+            playlist.write(content)
 
         return data
 
