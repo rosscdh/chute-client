@@ -125,7 +125,7 @@ class RssReaderMixin(object):
                     "url": item.link,
                     "slug": item.id,
                     "provider_crc": None,
-                    "wait_for": self.calculate_wait_for(corpus='%s %s %s' % (item.title, summary_detail, item.summary)),
+                    "wait_for": self.calculate_wait_for(corpus='%s %s' % (item.title, summary_detail)),
                     "template": None,
                     "updated_time": item.published
                 }
