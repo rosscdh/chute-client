@@ -13,3 +13,5 @@ feedparser
 qrcode
 arrow
 newspaper
+html2text
+markdown2

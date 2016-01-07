@@ -47,6 +47,8 @@ class RssReaderMixin(object):
     """
     Mixin to talk with rss feeds
     """
+    _article_store = None
+
     def article(self, content):
         if content:
             _article_store = Article(html=content)
