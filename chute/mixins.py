@@ -5,6 +5,7 @@ from .article import Article, NewsArticleMixin
 
 import HTMLParser
 import feedparser
+import slugify
 import json
 
 htmlParser = HTMLParser.HTMLParser()
@@ -86,12 +87,15 @@ class RssReaderMixin(NewsArticleMixin, object):
         feed_url += '/feed/'
         wordpress_feed = feedparser.parse(feed_url)
 
+        title = unicode(wordpress_feed.feed.title)
+        slug = slugify.slugify(title.lower())
+
         project = {
+            "slug": slug,
+            "name": title,
+            "url": wordpress_feed.feed.title_detail.base,
             "is_facebook_feed": False,
             "detail_url": wordpress_feed.feed.link,
-            "slug": None,
-            "name": unicode(wordpress_feed.feed.title),
-            "url": wordpress_feed.feed.title_detail.base,
             "date_created": wordpress_feed.feed.updated
         }
         feed = []
@@ -123,7 +127,7 @@ class RssReaderMixin(NewsArticleMixin, object):
                     "template_name": self.get_template_from_tags(tags=tags),
                     "post_type": "link",
                     "url": item.link,
-                    "slug": item.id,
+                    "slug": slugify.slugify(title.lower()),
                     "provider_crc": None,
                     "wait_for": self.calculate_wait_for(corpus='%s %s' % (item.title, summary_detail)),
                     "template": None,

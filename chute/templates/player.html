@@ -127,24 +127,27 @@
     $(document).ready(function( ) {
         var listen_to_pusher = function ( current_item, settings ) {
             if ( settings.project !== null ) {
-                Pusher.host    = 'localhost'
-                Pusher.ws_port = 8080
-                Pusher.wss_port = 8080
-                var pusher = new Pusher('{{ pusher.PUSHER_KEY }}', { authEndpoint: chute_object.settings.CORE_SERVER_ENDPOINT + 'box/auth/pusher/'});
+                var pusher = new Pusher('{{ pusher.PUSHER_KEY }}', {
+                                wsHost: location.host,
+                                wsPort: "8080",
+                                wssPort: "8080",
+                                enabledTransports: ['ws', 'flash']
+                             });
+
                 var pusher_channels = {
-                    'project': pusher.subscribe('presence-' + chute_object.project.slug ),
-                    'box': pusher.subscribe(chute_object.project.slug +'-{{ mac_addr }}'),
+                    'project': pusher.subscribe('presence'),
                 }
 
                 pusher_channels.project.bind('reload', function(data) {
-                  window.location.reload();
+                    console.log('triggered reload');
+                    window.location.reload();
                 });
-                pusher_channels.box.bind('reload', function(data) {
-                  window.location.reload();
-                });
-                pusher_channels.box.bind('goto', function(data) {
-                  handleChanges( data.pk );
-                });
+                // pusher_channels.box.bind('reload', function(data) {
+                //   window.location.reload();
+                // });
+                // pusher_channels.box.bind('goto', function(data) {
+                //   handleChanges( data.pk );
+                // });
             }
         };
 

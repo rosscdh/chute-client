@@ -10,6 +10,8 @@ from collections import Counter
 
 from .mixins import RssReaderMixin
 
+from pusher import Pusher
+
 import os
 import re
 import json
@@ -67,8 +69,11 @@ class BoxApiService(RssReaderMixin, object):
             data = resp.json()
             content = resp.content
 
-        with open(self.FEED_PATH, 'w') as playlist:
-            playlist.write(content)
+        if data:
+            with open(self.FEED_PATH, 'w') as playlist:
+                playlist.write(content)
+            puser_service = PusherService()
+            puser_service.send(channel='presence', event='reload')
 
         return data
 
@@ -151,3 +156,19 @@ class DownloadMediaService(object):
                     break
 
                 handle.write(block)
+
+
+class PusherService(object):
+    def __init__(self, **kwargs):
+        self.client = Pusher(app_id=getattr(settings, 'PUSHER_APP_ID'),
+                             key=getattr(settings, 'PUSHER_KEY'),
+                             secret=getattr(settings, 'PUSHER_SECRET'),
+                             host=u'127.0.0.1', port=4567, ssl=False)
+
+    def send(self, channel, event, **kwargs):
+        return self.client.trigger(unicode(channel), unicode(event), kwargs)
+
+
+
+
+

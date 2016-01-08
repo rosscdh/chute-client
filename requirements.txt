@@ -2,6 +2,7 @@ flask
 Werkzeug
 flask-classy
 flask-rq
+flask-socketio
 flask-restful  # not flask-api its fiddley and function based
 Flask-Script  # scripting
 Flask-Uploads
@@ -15,3 +16,5 @@ arrow
 newspaper
 html2text
 markdown2
+awesome-slugify
+-e git+https://github.com/rosscdh/pusher-http-python.git@ecae2242adb2660ae2df244cd5e456ccef014fd5#egg=pusher

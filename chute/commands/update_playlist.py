@@ -16,6 +16,6 @@ class UpdatePlaylist(Command):
             resp = s.update_playlist(content=resp)
         else:
             resp = s.update_playlist()
-        print(resp)
+        # print(resp)
         s.download_feed()
 
