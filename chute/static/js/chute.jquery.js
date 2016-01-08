@@ -160,6 +160,9 @@ $(function() {
                 this.current_feeditem.video = '/media/' + vid_is_present.filename;
             }
 
+            // set the page title
+            document.title = this.current_feeditem.name || this.options.project.name || 'signage-press.com';
+
             var context = {
                 'project': this.options.project,
                 'object': this.current_feeditem,

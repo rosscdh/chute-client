@@ -11,7 +11,7 @@ CORE_SERVER = 'http://magnificent.de'  # must have / at end
 CORE_SERVER_ENDPOINT = '%s/api/v1/' % CORE_SERVER  # must have / at end
 MAC_ADDR = get_mac()
 
-WORDPRESS_RSS_BASE_URL = 'http://worryfreelabs.com' # MUST NOT have a /
+WORDPRESS_RSS_BASE_URL = 'http://taskrocket.info' # MUST NOT have a /
 WORDPRESS_RSS_CATEGORY = None
 WORDPRESS_RSS_NUM_ITEMS = 100
 

@@ -140,12 +140,12 @@ class DownloadMediaService(object):
         return file_path, message
 
     def save(self, video_url, file_path):
+        resp = requests.get(video_url, stream=True)
+
+        if not resp.ok:
+            raise Exception('Download Error: %s %s' % (resp, video_url))
+
         with open(file_path, 'wb') as handle:
-            resp = requests.get(video_url, stream=True)
-
-            if not resp.ok:
-                raise Exception('Download Error: %s %s' % (resp, video_url))
-
             for block in resp.iter_content(1024):
                 if not block:
                     break
