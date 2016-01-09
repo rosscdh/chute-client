@@ -160,10 +160,14 @@
         // Weather template
         var weather_tpl = $("script#tpl-weather").html();
 
+        window.settings = {{ project_json|safe }};
+        window.project = {{ settings|safe }};
+        window.feed = {{ feed_json|safe }};
+
         var chute_object = {
-            'feed': {{ feed_json|safe }},
-            'project': {{ project_json|safe }},
-            'settings': {{ settings|safe }},
+            'feed': window.feed,
+            'project': window.project,
+            'settings': window.settings,
             'listeners': [listen_to_pusher],
             'templates': {
                 'no_content': no_content_template,
@@ -253,16 +257,22 @@
             //console.log('on.end_progress');
             NProgress.done();
         });
+
         /**
         * Weather display handler
         */
         $( 'body' ).on( 'chute.begin', function( event ) {
-            console.log('on.chute.begin:');
+            var settings = window.settings;
+            var location = settings.location.location || 'Mönchengladbach, NRW, DE'; // can be lat,long or townname, state, ISO2 coutnry
+            var woeid = settings.location.woeid || '';
+            var unit = settings.location.unit || 'c'; // because fahrenheit blah
+console.log(location)
             $.simpleWeather({
-                location: 'Mönchengladbach, NRW, DE',
-                woeid: '',
-                unit: 'c',
+                location: location,
+                woeid: woeid,
+                unit: unit,
                 success: function( data ) {
+                    console.log(data)
                     var weather_html = window.chute.options.renderer.compile( weather_tpl );
                     var html = weather_html({'weather': data, 'time': moment_in_time()});
                     //console.log(data);
@@ -276,6 +286,7 @@
 
         $( "body" ).chute_controller(chute_object);
         window.chute = $( "body" ).data( 'chute-chute_controller' );
+
     });
     </script>
 </body>

@@ -96,7 +96,12 @@ class RssReaderMixin(NewsArticleMixin, object):
             "url": wordpress_feed.feed.title_detail.base,
             "is_facebook_feed": False,
             "detail_url": wordpress_feed.feed.link,
-            "date_created": wordpress_feed.feed.updated
+            "date_created": wordpress_feed.feed.updated,
+            "location": {
+                "location": "-31.9546516,115.8351524",
+                "woeid": "",
+                "unit": "f",
+            }
         }
         feed = []
         for item in wordpress_feed.entries[:number_of_items]:
