@@ -6,11 +6,14 @@ Services to
 """
 import config as settings
 
+from tomorrow import threads
 from collections import Counter
 
 from .mixins import RssReaderMixin
 
 from pusher import Pusher
+
+import sh
 
 import os
 import re
@@ -48,11 +51,14 @@ class BoxApiService(RssReaderMixin, object):
         }
         url = '%s%s' % (settings.CORE_SERVER_ENDPOINT,
                         'box/register/')
-        print(url)
-        print(data)
+
         resp = requests.post(url, data=data)
 
         return resp
+
+    def update_config(self, **kwargs):
+        s = UpdateConfigService()
+        s.process()
 
     def update_playlist(self, **kwargs):
         content = kwargs.get('content', None)
@@ -64,7 +70,7 @@ class BoxApiService(RssReaderMixin, object):
             # we have no content passed in then get it form teh playlist server
             url = '%s%s' % (settings.CORE_SERVER_ENDPOINT,
                             'box/%s/playlist/' % settings.MAC_ADDR)
-
+            print url
             resp = requests.get(url)
             data = resp.json()
             content = resp.content
@@ -169,6 +175,21 @@ class PusherService(object):
         return self.client.trigger(unicode(channel), unicode(event), kwargs)
 
 
+class UpdateConfigService(object):
+    """
+    Service to download and run config commands locally
+    """
+    url = '%s%s' % (settings.CORE_SERVER_ENDPOINT,
+                    'box/%s/config/' % settings.MAC_ADDR)
 
+    def process(self):
+        #resp = requests.get(self.url)
+        self.run_ansible()
+
+    #@threads(1)
+    def run_ansible(self):
+        import pdb;pdb.set_trace()
+        output = sh.ansible('all -i all -c local -m shell -a "echo hello world"')
+        print(output)
 
 

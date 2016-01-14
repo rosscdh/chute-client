@@ -80,11 +80,7 @@ class RssReaderMixin(NewsArticleMixin, object):
             'WORDPRESS_RSS_BASE_URL',
             'http://sektor-m.com'
         )
-        if category:
-            feed_url += '/category/'
-            feed_url += str(category)
 
-        feed_url += '/feed/'
         wordpress_feed = feedparser.parse(feed_url)
 
         title = unicode(wordpress_feed.feed.title)

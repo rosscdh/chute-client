@@ -18,3 +18,6 @@ html2text
 markdown2
 awesome-slugify
 -e git+https://github.com/rosscdh/pusher-http-python.git@ecae2242adb2660ae2df244cd5e456ccef014fd5#egg=pusher
+tomorrow
+sh
+cryptography

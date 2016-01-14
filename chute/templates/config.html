@@ -1,0 +1,43 @@
+{% from "_formhelpers.html" import render_field %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+
+    <title>&nbsp;</title>
+
+    {% assets "css/bootstrap.min.css", "video-js/video-js.min.css" %}
+        <link href="{{ ASSET_URL }}" rel="stylesheet" />
+    {% endassets %}
+
+    {% assets "js/modernizr-2.8.3-custom.min.js" %}
+        <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+    {% endassets %}
+
+</head>
+
+<body>
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+
+<form method="POST" action="/config/">
+    {{ form.csrf_token }}
+    {{ render_field(form.wordpress_url) }}
+    <div class="control-group">
+        <button type="submit">Save</button>
+    </div>
+</form>
+</body>
+
+</html>

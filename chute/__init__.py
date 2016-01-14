@@ -10,7 +10,7 @@ from flask import Flask, render_template, send_from_directory
 
 from chute.views import base_blueprint
 from chute.views import blueprint as api_blueprint
-from chute.views import IndexView
+from chute.views import IndexView, ConfigView
 
 app = Flask(__name__)
 app.config.from_object('config')
@@ -39,10 +39,10 @@ def install_secret_key(app, filename='secret_key'):
         if not os.path.isdir(full_path):
             print('mkdir -p {filename}'.format(filename=full_path))
         print('head -c 24 /dev/urandom > {filename}'.format(filename=filename))
-        sys.exit(1)
+        app.config['SECRET_KEY'] = open(filename, 'rb').read()
 
-if not app.config['DEBUG']:
-    install_secret_key(app)
+install_secret_key(app)
+
 
 @app.errorhandler(404)
 def not_found(error):
@@ -54,7 +54,9 @@ assets.init_app(app)
 app.register_blueprint(base_blueprint)
 app.register_blueprint(api_blueprint)
 
+ConfigView.register(app, route_base='/config/')
 IndexView.register(app, route_base='/')
+
 
 # Later on you'll import the other blueprints the same way:
 #from app.comments.views import mod as commentsModule

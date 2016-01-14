@@ -11,6 +11,7 @@ class UpdatePlaylist(Command):
         """
         """
         s = BoxApiService()
+
         if getattr(settings, 'WORDPRESS_RSS_BASE_URL', None) is not None:
             resp = s.get_rss_from_wordpress()
             resp = s.update_playlist(content=resp)
