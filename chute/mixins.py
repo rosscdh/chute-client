@@ -7,6 +7,7 @@ import HTMLParser
 import feedparser
 import slugify
 import json
+import re
 
 htmlParser = HTMLParser.HTMLParser()
 
@@ -100,15 +101,17 @@ class RssReaderMixin(NewsArticleMixin, object):
             }
         }
         feed = []
+
         for item in wordpress_feed.entries[:number_of_items]:
             #print item
 
             tags = [t.get('term') for t in item.get('tags')]
             summary_detail = self.html_to_markdown(content=unicode(item.get('summary_detail').get('value')))
+            summary_detail = re.sub('(\!)?\[(.*?)\]\((.*?)\)', '', summary_detail).strip()
             title = htmlParser.unescape(unicode(item.get('title')))
 
             try:
-                images = self.extract_images_from_content(content=unicode(item.content[0].value))
+                images = self.extract_images_from_content(content=unicode(item.get('summary_detail').get('value')))
                 image = images[0]
             except:
                 images = []
