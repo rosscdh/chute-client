@@ -34,6 +34,8 @@
 <form method="POST" action="/config/">
     {{ form.csrf_token }}
     {{ render_field(form.wordpress_url) }}
+    {{ render_field(form.location) }}
+    {{ render_field(form.unit) }}
     <div class="control-group">
         <button type="submit">Save</button>
     </div>

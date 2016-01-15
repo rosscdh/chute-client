@@ -95,9 +95,9 @@ class RssReaderMixin(NewsArticleMixin, object):
             "detail_url": wordpress_feed.feed.link,
             "date_created": wordpress_feed.feed.updated,
             "location": {
-                "location": "-31.9546516,115.8351524",
+                "location": settings.CONFIG_JSON.get('location', "-31.9546516,115.8351524"),
                 "woeid": "",
-                "unit": "f",
+                "unit": settings.CONFIG_JSON.get('unit', "c"),
             }
         }
         feed = []
