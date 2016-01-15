@@ -52,17 +52,10 @@ class RssReaderMixin(NewsArticleMixin, object):
     _article_store = None
 
     def article(self, content):
-        if content:
-            _article_store = Article(html=content)
-            _article_store.parse()
+        _article_store = Article(html=content)
+        _article_store.parse()
 
-            return _article_store
-        return None
-
-    def extract_images_from_content(self, content):
-        # @TODO store this variable at the instance level
-        # so we can do other thing to the content
-        return self.article(content=content).images
+        return _article_store
 
     def get_template_from_tags(self, tags):
         template = None
@@ -102,31 +95,41 @@ class RssReaderMixin(NewsArticleMixin, object):
         }
         feed = []
 
-        for item in wordpress_feed.entries[:number_of_items]:
-            #print item
+        short_codes = '(\!)?\[(.*?)\]\((.*?)\)'
 
-            tags = [t.get('term') for t in item.get('tags')]
-            summary_detail = self.html_to_markdown(content=unicode(item.get('summary_detail').get('value')))
-            summary_detail = re.sub('(\!)?\[(.*?)\]\((.*?)\)', '', summary_detail).strip()
-            title = htmlParser.unescape(unicode(item.get('title')))
+        for item in wordpress_feed.entries[:number_of_items]:
+            article = self.article(content=unicode(item.summary_detail.value))
+
+            tags = [t.get('term') for t in item.tags]
+
+            summary = self.html_to_markdown(content=unicode(item.summary))
+            summary = re.sub(short_codes, '', summary).strip()
+
+            summary_detail = self.html_to_markdown(content=unicode(item.summary_detail.value))
+            summary_detail = re.sub(short_codes, '', summary_detail).strip()
+
+            title = htmlParser.unescape(unicode(item.title))
+            #print item.keys()
+            try:
+                image = article.images[0]
+            except:
+                image = None
 
             try:
-                images = self.extract_images_from_content(content=unicode(item.get('summary_detail').get('value')))
-                image = images[0]
+                video = article.movies[0]
             except:
-                images = []
-                image = None
+                video = None
 
             try:
                 rss_item = {
                     "pk": item.id,
                     "name": title,
                     "message": summary_detail,
-                    "description": summary_detail,
+                    "description": summary if summary != summary_detail else None,
                     "picture": image,
-                    "video": None,
+                    "video": video,
                     "video_transcode_status": None,
-                    "updated_at": "2015-11-23T20:27:17Z",
+                    "updated_at": item.published,
                     "absolute_url": item.link,
                     "template_name": self.get_template_from_tags(tags=tags),
                     "post_type": "link",

@@ -78,10 +78,10 @@
 
     <script id="tpl-layout-basic" type="text/x-handlebars-template">
         {{# if object.name }}
-        {{# if object.description }}
+        {{# if object.message }}
         <div id="content-markup">
-            <h1>{{ object.name }}{{# if object.message }}<br/><small>{{ object.message }}</small>{{/if}}</h1>
-            <p>{{ object.description }}</p>
+            <h1>{{ object.name }}{{# if object.description }}<br/><small>{{ object.description }}</small>{{/if}}</h1>
+            <p>{{ object.message }}</p>
         </div>
         {{/if}}
         {{/if}}
@@ -99,8 +99,8 @@
 
     <script id="tpl-layout-image" type="text/x-handlebars-template">
         <div id="content-markup">
-            <h1>{{ object.name }}<br/><small>{{ object.message }}</small></h1>
-            <p>{{ object.description }}</p>
+            <h1>{{ object.name }}<br/><small>{{ object.description }}</small></h1>
+            <p>{{ object.message }}</p>
         </div>
         </script>
     </script>
