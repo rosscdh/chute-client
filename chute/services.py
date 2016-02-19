@@ -11,6 +11,7 @@ from collections import Counter
 
 from .mixins import RssReaderMixin
 
+from flask import render_template
 from pusher import Pusher
 
 import sh
@@ -43,7 +44,6 @@ class BoxApiService(RssReaderMixin, object):
 
     def register(self, **kwargs):
         project_slug = kwargs.get('project', None)  # project_slug to register with
-        #playlist_uuid = kwargs.get('playlist', True)  # playlist uuid to register with
 
         data = {
             'mac_address': self.MAC_ADDRESS,
@@ -59,6 +59,34 @@ class BoxApiService(RssReaderMixin, object):
     def update_config(self, **kwargs):
         s = UpdateConfigService()
         s.process()
+
+    def render(self, **kwargs):
+        playlist = self.read_playlist()
+        context = {'project_json': json.dumps(playlist.get('project', {})),
+                   'feed_json': json.dumps(playlist.get('feed', [])),
+                   'mac_addr': settings.MAC_ADDR,
+                   'settings': json.dumps({
+                       'CORE_SERVER': settings.CORE_SERVER,
+                       'CORE_SERVER_ENDPOINT': settings.CORE_SERVER_ENDPOINT,
+                       'MAC_ADDRESS': settings.MAC_ADDR,
+                   }),
+                   'pusher': {
+                       'PUSHER_KEY': settings.PUSHER_KEY,
+                    }}
+
+        rendered_template = render_template('player.html', **context)
+
+        if os.path.isdir(settings.DIST_PATH) is False:
+            os.makedirs(settings.DIST_PATH)
+
+        target_file = os.path.join(settings.DIST_PATH, 'index.html')
+
+        print('Writing to: %s' % target_file)
+
+        with open(target_file, 'w') as output_file:
+            output_file.write(rendered_template.encode('utf-8'))
+
+        return rendered_template
 
     def update_playlist(self, **kwargs):
         content = kwargs.get('content', None)
@@ -188,7 +216,6 @@ class UpdateConfigService(object):
 
     #@threads(1)
     def run_ansible(self):
-        import pdb;pdb.set_trace()
         output = sh.ansible('all -i all -c local -m shell -a "echo hello world"')
         print(output)
 

@@ -7,3 +7,4 @@ from .download_playlist_media import DownloadPlaylistMedia
 from .convert_mov_to_mp4 import ConvertMovToMP4
 from .send_event import SendEvent
 from .update_config import UpdateConfig
+from .render_static import RenderStatic

@@ -30,6 +30,7 @@ PUSHER_APP_ID = '79947'
 PUSHER_KEY = 'cf7fc048e21bd39e6f82'
 PUSHER_SECRET = '01d612aade08edc9dfde'
 
+DIST_PATH = os.path.join(_basedir, 'dist')
 STATIC_PATH = os.path.join(_basedir, 'static')
 BOWER_COMPONENTS_ROOT = os.path.join(_basedir, 'bower_components')
 
