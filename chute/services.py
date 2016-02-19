@@ -77,7 +77,7 @@ class BoxApiService(RssReaderMixin, object):
                        'PUSHER_KEY': settings.PUSHER_KEY,
                     }}
 
-        rendered_template = render_template('player.html', **context)
+        rendered_template = render_template('player.html', **context).encode('utf-8')
 
         if os.path.isdir(settings.DIST_PATH) is False:
             os.makedirs(settings.DIST_PATH)
@@ -87,7 +87,7 @@ class BoxApiService(RssReaderMixin, object):
         print('Writing to: %s' % target_file)
 
         with open(target_file, 'w') as output_file:
-            output_file.write(rendered_template.encode('utf-8'))
+            output_file.write(rendered_template)
 
         return rendered_template
 
