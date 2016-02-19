@@ -21,3 +21,4 @@ awesome-slugify
 tomorrow
 sh
 cryptography
+markupsafe
