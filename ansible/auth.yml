@@ -1,0 +1,13 @@
+---
+# ansible-playbook -c paramiko -i hosts setup.yml --ask-pass --sudo
+- hosts: all
+  sudo: yes
+  user: pi
+
+  # roles:
+  #   - { role: mikolak.raspi-config, raspi_config_update_packages: no, raspi_config_expanded_filesystem: yes, raspi_config_ensure_optimal_cpu_params: yes, raspi_config_expanded_filesystem: yes, raspi_config_enable_camera: yes }
+
+  tasks:
+    - name: Creates destination directory on the Pi for our key.
+      authorized_key: user=pi key="{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+

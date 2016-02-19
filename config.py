@@ -14,7 +14,7 @@ try:
 except:
     pass
 
-DEBUG = True
+DEBUG = CONFIG_JSON.get('DEBUG', True)
 PROJECT_ENV = 'dev'
 
 CORE_SERVER = 'http://magnificent.de'  # must have / at end
