@@ -8,6 +8,8 @@ Flask-Script  # scripting
 Flask-Uploads
 Flask-WTF
 Flask-Assets
+markupsafe
+redis
 requests
 qtfaststart
 feedparser
@@ -21,4 +23,3 @@ awesome-slugify
 tomorrow
 sh
 cryptography
-markupsafe
