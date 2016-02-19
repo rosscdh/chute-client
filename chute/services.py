@@ -61,7 +61,10 @@ class BoxApiService(RssReaderMixin, object):
         s.process()
 
     def render(self, **kwargs):
+        self.update_playlist(content=self.get_rss_from_wordpress())
+
         playlist = self.read_playlist()
+
         context = {'project_json': json.dumps(playlist.get('project', {})),
                    'feed_json': json.dumps(playlist.get('feed', [])),
                    'mac_addr': settings.MAC_ADDR,
