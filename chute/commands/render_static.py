@@ -12,4 +12,3 @@ class RenderStatic(Command):
         """
         s = BoxApiService()
         resp = s.render()
-        print resp
