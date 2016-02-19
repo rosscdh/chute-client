@@ -24,11 +24,12 @@
             border:solid #c00 1px;
         }
         #content-markup {
-            bottom:30px;
             height:auto;
-            left:30px;
+            max-height:45%;
+            left:0px;
+            bottom:0px;
             position:absolute;
-            width:90%;
+            width:100%;
             z-index:1000;
 
             background:white;
@@ -39,6 +40,14 @@
             /* For IE 8*/
             -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#99FFFFFF, endColorstr=#99FFFFFF)";
             border-radius: 25px;
+        }
+        #content-markup .header {
+            font-size:1.6em;
+            font-weight:bolder;
+        }
+        #content-markup .message {
+            font-size:1.1em;
+            font-weight:bold;
         }
 
     </style>
@@ -80,8 +89,8 @@
         {{# if object.name }}
         {{# if object.message }}
         <div id="content-markup">
-            <h1>{{ object.name }}{{# if object.description }}<br/><small>{{ object.description }}</small>{{/if}}</h1>
-            <p>{{ object.message }}</p>
+            <div class="header"><h1>{{ object.name }}{{# if object.description }}<br/><small>{{ object.description }}</small>{{/if}}</h1></div>
+            <div class="message"><h1><p>{{ object.message }}</p></h1>
         </div>
         {{/if}}
         {{/if}}
