@@ -98,7 +98,8 @@ class RssReaderMixin(NewsArticleMixin, object):
         short_codes = '(\!)?\[(.*?)\]\((.*?)\)'
 
         for item in wordpress_feed.entries[:number_of_items]:
-            article = self.article(content=unicode(item.summary_detail.value))
+            #article = self.article(content=unicode(item.summary_detail.value))
+            article = self.article(content=unicode(item.content[0].value))
 
             tags = [t.get('term') for t in item.tags]
 
@@ -109,7 +110,7 @@ class RssReaderMixin(NewsArticleMixin, object):
             summary_detail = re.sub(short_codes, '', summary_detail).strip()
 
             title = htmlParser.unescape(unicode(item.title))
-            #print item.keys()
+
             try:
                 image = article.images[0]
             except:
