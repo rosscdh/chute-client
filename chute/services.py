@@ -109,8 +109,11 @@ class BoxApiService(RssReaderMixin, object):
         if data:
             with open(self.FEED_PATH, 'w') as playlist:
                 playlist.write(content)
-            puser_service = PusherService()
-            puser_service.send(channel='presence', event='reload')
+            try:
+                puser_service = PusherService()
+                puser_service.send(channel='presence', event='reload')
+            except:
+                pass
 
         return data
 
