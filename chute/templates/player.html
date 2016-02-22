@@ -12,7 +12,7 @@
     {% assets "css/bootstrap.min.css", "video-js/video-js.min.css" %}
         <link href="{{ ASSET_URL }}" rel="stylesheet" />
     {% endassets %}
-    {% assets "nprogress-0.1.6/nprogress.css", "simpleWeather-3.0.2/simpleWeather.css", "BigVideo/css/bigvideo.css" %}
+    {% assets "nprogress-0.1.6/nprogress.css", "simpleWeather-3.1.0/simpleWeather.css", "BigVideo/css/bigvideo.css" %}
         <link href="{{ ASSET_URL }}" rel="stylesheet" />
     {% endassets %}
 
@@ -131,7 +131,7 @@
     </script>
     {% endassets %}
 
-    {% assets "nprogress-0.1.6/nprogress.js", "simpleWeather-3.0.2/jquery.simpleWeather.min.js", "momentjs-2.9.0/momentjs.lang.min.js", "BigVideo/lib/bigvideo.js" %}
+    {% assets "nprogress-0.1.6/nprogress.js", "simpleWeather-3.1.0/jquery.simpleWeather.min.js", "momentjs-2.9.0/momentjs.lang.min.js", "BigVideo/lib/bigvideo.js" %}
         <script type="text/javascript" src="{{ ASSET_URL }}"></script>
     {% endassets %}
 
@@ -281,7 +281,7 @@
 
             $.simpleWeather({
                 location: current_location,
-                woeid: woeid,
+                //woeid: woeid,
                 unit: unit,
                 success: function( data ) {
                     var weather_html = window.chute.options.renderer.compile( weather_tpl );
