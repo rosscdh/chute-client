@@ -111,6 +111,23 @@ class RssReaderMixin(NewsArticleMixin, object):
 
             title = htmlParser.unescape(unicode(item.title))
 
+            # Extract Seconds
+            # Turn into method
+            res = re.search("\#(?P<time_length>\d+)(?P<time_type>(?:s|m|h))", title)
+            seconds = None
+            if res:
+                time_length = res.group('time_length')
+                time_type = res.group('time_type')
+                seconds = 30
+                if time_type == 's':
+                    seconds = time_length
+                elif time_type == 'm':
+                    seconds = time_length/60
+                elif time_type == 'h':
+                    seconds = time_length/3600
+                else:
+                    raise Exception('Not a valid Time type must be #{time_length}s or #{time_length}m or #{time_length}h'.format(time_length=time_length))
+
             try:
                 image = article.images[0]
             except:
@@ -141,7 +158,7 @@ class RssReaderMixin(NewsArticleMixin, object):
                     "url": item.link,
                     "slug": slugify.slugify(title.lower()),
                     "provider_crc": None,
-                    "wait_for": self.calculate_wait_for(corpus='%s %s' % (item.title, summary_detail)),
+                    "wait_for": seconds if seconds else self.calculate_wait_for(corpus='%s %s' % (item.title, summary_detail)),
                     "template": None,
                     "updated_time": item.published
                 }
