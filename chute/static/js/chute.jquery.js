@@ -79,7 +79,7 @@ $(function() {
 
                 self.timer = window.setTimeout( function () {
                     // when it expires call next
-                    $( 'body' ).trigger( 'end_progress', [] );
+                    $( 'body' ).trigger( 'end_progress', [ this.current_feeditem ] );
                     self.next();
                 }, self.timeout());
                 $( 'body' ).trigger( 'start_progress', [ this.wait_for, this.current_feeditem ] );

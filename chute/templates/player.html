@@ -211,13 +211,16 @@
         hasher.initialized.add(handleChanges); //add initialized listener (to grab initial value in case it is already set)
         hasher.init(); //initialize hasher (start listening for history changes)
 
+        // Video Player
+        window.BV = new $.BigVideo();
+
+
         /**
         * Progress Bar Handler
         */
         $( 'body' ).on( 'start_progress', function( event, num_seconds, feed_item ) {
             // console.log('on.start_progress num_seconds:' + num_seconds);
             // console.log(feed_item)
-            window.BV = new $.BigVideo();
 
             var current_second = 1;
             var window_width = $('body').width();
@@ -243,26 +246,26 @@
                 //NProgress.inc(inc_amount);
             };
             var n_progress = window.setInterval(n_progress_tick, 1000);
+        });
 
+        $( 'body' ).on( 'end_progress', function( event, feed_item ) {
             /**
             * Video Handler
             */
+            window.BV.dispose() // clear all current
+
             if (feed_item.video !== null) {
                 //console.log(feed_item.video);
                 var suffix = feed_item.video.split('.')
                 suffix = suffix[1];
-                window.BV.dispose()
                 window.BV.init();
                 window.BV.show([
                     { type: "video/"+ suffix,  src: feed_item.video },
                 ], {ambient: true});
             } else {
                 if (feed_item.picture) {
-                    window.BV.dispose()
                     window.BV.init();
                     window.BV.show(feed_item.picture);
-                } else {
-                    window.BV.dispose()
                 }
             }
 
