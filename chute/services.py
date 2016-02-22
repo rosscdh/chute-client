@@ -144,10 +144,18 @@ class ProcessFeedMediaService(object):
 
         self.feed = json.loads(feed.read().decode('utf8'))
 
+    def delete_unused(self, current_files):
+        current_files.append(os.path.join(settings.MEDIA_PATH, 'playlist.json'))  # append the playlist
+        remove_me_files = [ os.path.join(settings.MEDIA_PATH, f) for f in os.listdir(settings.MEDIA_PATH) if os.path.join(settings.MEDIA_PATH, f) not in current_files ]
+        for f in remove_me_files:
+            print('Removing file: %s' % f)
+            os.remove(f)
+
     def process(self):
         """
         download media extracted from the feed
         """
+        current_files = []
         for i, item in enumerate(self.feed.get('feed', [])):
 
             for url in [item.get('picture'), item.get('video')]:
@@ -159,8 +167,10 @@ class ProcessFeedMediaService(object):
 
                     s = DownloadMediaService(video=media)
                     file_path, download_result = s.process()
+                    current_files.append(os.path.join(settings.MEDIA_PATH, file_path))
 
                     print('File: %s Download Result: %s' % (file_path, download_result))
+        self.delete_unused(current_files=current_files)
 
 
 class DownloadMediaService(object):
