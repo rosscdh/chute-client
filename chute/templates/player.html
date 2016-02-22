@@ -246,7 +246,7 @@
             var n_progress = window.setInterval(n_progress_tick, 1000);
 
             if (feed_item.video !== null) {
-                //console.log(feed_item.video);
+                console.log(feed_item.video);
                 window.BV.show([
                     { type: "video/mp4",  src: feed_item.video },
                 ], {ambient: true});
