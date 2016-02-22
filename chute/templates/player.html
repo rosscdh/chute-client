@@ -157,7 +157,7 @@
                     window.location.reload();
                 });
 
-                pusher_channels.project.bind('reload', function(data) {
+                pusher_channels.project.bind('goto', function(data) {
                     console.log('triggered goto: ' + data);
                     handleChanges( data.pk );
                 });
@@ -197,8 +197,7 @@
         //handle hash changes
         function handleChanges( newPk ){
             if ( newPk !== NaN && newPk !== '' ) {
-                var pk = parseInt( newPk );
-                window.chute.goto( pk );
+                window.chute.goto( newPk );
             }
             // if (newPk == 'next') {
             //     window.chute.next();

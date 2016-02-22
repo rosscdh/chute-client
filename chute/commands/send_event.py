@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 from flask.ext.script import Command, Option
 
-
 from ..services import PusherService
+
+import json
 
 
 class SendEvent(Command):
@@ -10,12 +11,18 @@ class SendEvent(Command):
         return [
             Option('-c', '--channel', dest='channel', default='presence'),
             Option('-e', '--event', dest='event', default='reload'),
+            Option('-d', '--data', dest='data', default={}),
         ]
 
-    def run(self, channel, event):
+    def run(self, channel, event, data):
         """
         """
+        try:
+            data = json.loads(data)
+        except Exception as e:
+            data = {'error': {'message': e}}
+        print data
         s = PusherService()
-        resp = s.send(channel=channel, event=event)
+        resp = s.send(channel=channel, event=event, **data)
         print(resp)
 
