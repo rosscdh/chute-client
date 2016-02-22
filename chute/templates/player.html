@@ -275,16 +275,15 @@
         */
         $( 'body' ).on( 'chute.begin', function( event ) {
             var settings = window.settings;
-            var location = settings.location.location || 'Mönchengladbach, NRW, DE'; // can be lat,long or townname, state, ISO2 coutnry
+            var current_location = settings.location.location || 'Mönchengladbach, NRW, DE'; // can be lat,long or townname, state, ISO2 coutnry
             var woeid = settings.location.woeid || '';
             var unit = settings.location.unit || 'c'; // because fahrenheit blah
 
             $.simpleWeather({
-                location: location,
+                location: current_location,
                 woeid: woeid,
                 unit: unit,
                 success: function( data ) {
-                    console.log(data)
                     var weather_html = window.chute.options.renderer.compile( weather_tpl );
                     var html = weather_html({'weather': data, 'time': moment_in_time()});
                     //console.log(data);
