@@ -246,9 +246,11 @@
             var n_progress = window.setInterval(n_progress_tick, 1000);
 
             if (feed_item.video !== null) {
-                console.log(feed_item.video);
+                //console.log(feed_item.video);
+                var suffix = feed_item.video.split('.')
+                suffix = suffix[1];
                 window.BV.show([
-                    { type: "video/mp4",  src: feed_item.video },
+                    { type: "video/"+ suffix,  src: feed_item.video },
                 ], {ambient: true});
             } else {
                 window.BV.show(feed_item.picture);
