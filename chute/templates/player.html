@@ -213,7 +213,7 @@
 
         // Video Player
         window.BV = new $.BigVideo();
-
+        window.BV.init();
 
         /**
         * Progress Bar Handler
@@ -251,12 +251,9 @@
                 console.log(feed_item.video);
                 var suffix = feed_item.video.split('.')
                 suffix = suffix[1];
-                window.BV.init();
                 window.BV.show([{ type: "video/"+ suffix,  src: feed_item.video },], {ambient: true});
             } else {
                 if (feed_item.picture) {
-                    console.log(feed_item.picture);
-                    window.BV.init();
                     window.BV.show(feed_item.picture);
                 }
             }
@@ -269,7 +266,7 @@
             /**
             * Video Handler
             */
-            window.BV.dispose() // clear all current
+            window.BV.remove() // clear all current
 
         });
 
