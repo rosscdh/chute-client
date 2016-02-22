@@ -119,7 +119,11 @@ class RssReaderMixin(NewsArticleMixin, object):
             try:
                 video = article.movies[0]
             except:
-                video = None
+                videos = [video for video in re.findall("https?://(?:[a-z0-9\-]+\.)+[a-z0-9]{2,6}(?:/[^/#?]+)+\.(?:m4v|mp4)", item.content[0].value)]
+                try:
+                    video = videos[0]
+                except:
+                    video = None
 
             try:
                 rss_item = {
