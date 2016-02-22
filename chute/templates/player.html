@@ -214,7 +214,6 @@
         // Video Player
         window.BV = new $.BigVideo();
         window.BV.init();
-
         /**
         * Progress Bar Handler
         */
@@ -253,6 +252,11 @@
                 suffix = suffix[1];
                 window.BV.show([{ type: "video/"+ suffix,  src: feed_item.video },], {ambient: true});
             } else {
+
+                {% assets "img/shim.gif" %}
+                    window.BV.show('{{ ASSET_URL }}');
+                {% endassets %}
+
                 if (feed_item.picture) {
                     window.BV.show(feed_item.picture);
                 }
@@ -262,12 +266,6 @@
 
         $( 'body' ).on( 'end_progress', function( event, feed_item ) {
             NProgress.done();
-
-            /**
-            * Video Handler
-            */
-            window.BV.remove() // clear all current
-
         });
 
         // Date and Time
