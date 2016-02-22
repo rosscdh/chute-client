@@ -247,11 +247,15 @@
             var n_progress = window.setInterval(n_progress_tick, 1000);
 
             if (feed_item.video !== null) {
-                console.log(feed_item.video);
+                window.BV.remove();
+                window.BV.init();
                 var suffix = feed_item.video.split('.')
                 suffix = suffix[1];
                 window.BV.show([{ type: "video/"+ suffix,  src: feed_item.video },], {ambient: true});
             } else {
+
+                window.BV.remove();
+                window.BV.init();
 
                 {% assets "img/shim.gif" %}
                     window.BV.show('{{ ASSET_URL }}');
