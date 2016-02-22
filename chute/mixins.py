@@ -127,6 +127,8 @@ class RssReaderMixin(NewsArticleMixin, object):
                     seconds = time_length/3600
                 else:
                     raise Exception('Not a valid Time type must be #{time_length}s or #{time_length}m or #{time_length}h'.format(time_length=time_length))
+                # remove from title
+                title = title.replace('#{time_length}{time_type}'.format(time_length=time_length, time_type=time_type), '')
 
             try:
                 image = article.images[0]
