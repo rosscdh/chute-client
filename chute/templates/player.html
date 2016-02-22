@@ -246,28 +246,30 @@
                 //NProgress.inc(inc_amount);
             };
             var n_progress = window.setInterval(n_progress_tick, 1000);
-        });
-
-        $( 'body' ).on( 'end_progress', function( event, feed_item ) {
-            /**
-            * Video Handler
-            */
-            window.BV.dispose() // clear all current
 
             if (feed_item.video !== null) {
-                //console.log(feed_item.video);
+                console.log(feed_item.video);
                 var suffix = feed_item.video.split('.')
                 suffix = suffix[1];
                 window.BV.init();
-                window.BV.show([
-                    { type: "video/"+ suffix,  src: feed_item.video },
-                ], {ambient: true});
+                window.BV.show([{ type: "video/"+ suffix,  src: feed_item.video },], {ambient: true});
             } else {
                 if (feed_item.picture) {
+                    console.log(feed_item.picture);
                     window.BV.init();
                     window.BV.show(feed_item.picture);
                 }
             }
+
+        });
+
+        $( 'body' ).on( 'end_progress', function( event, feed_item ) {
+            NProgress.done();
+
+            /**
+            * Video Handler
+            */
+            window.BV.dispose() // clear all current
 
         });
 
@@ -279,11 +281,6 @@
             return now;
         }
         var a_moment_in_time = window.setInterval(moment_in_time, 1000);
-
-        $( 'body' ).on( 'end_progress', function( event ) {
-            //console.log('on.end_progress');
-            NProgress.done();
-        });
 
         /**
         * Weather display handler
