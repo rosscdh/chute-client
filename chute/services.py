@@ -61,7 +61,10 @@ class BoxApiService(RssReaderMixin, object):
         s.process()
 
     def render(self, **kwargs):
+        # Get latest feed from source
         self.update_playlist(content=self.get_rss_from_wordpress())
+        # Download the feed media, also performs a delete of unused media
+        self.download_feed()
 
         playlist = self.read_playlist()
 
