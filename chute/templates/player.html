@@ -218,7 +218,6 @@
             // console.log('on.start_progress num_seconds:' + num_seconds);
             // console.log(feed_item)
             window.BV = new $.BigVideo();
-            window.BV.init();
 
             var current_second = 1;
             var window_width = $('body').width();
@@ -245,15 +244,26 @@
             };
             var n_progress = window.setInterval(n_progress_tick, 1000);
 
+            /**
+            * Video Handler
+            */
             if (feed_item.video !== null) {
                 //console.log(feed_item.video);
                 var suffix = feed_item.video.split('.')
                 suffix = suffix[1];
+                window.BV.dispose()
+                window.BV.init();
                 window.BV.show([
                     { type: "video/"+ suffix,  src: feed_item.video },
                 ], {ambient: true});
             } else {
-                window.BV.show(feed_item.picture);
+                if (feed_item.picture) {
+                    window.BV.dispose()
+                    window.BV.init();
+                    window.BV.show(feed_item.picture);
+                } else {
+                    window.BV.dispose()
+                }
             }
 
         });
