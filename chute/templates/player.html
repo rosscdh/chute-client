@@ -142,26 +142,27 @@
         var listen_to_pusher = function ( current_item, settings ) {
             if ( settings.project !== null ) {
                 var pusher = new Pusher('{{ pusher.PUSHER_KEY }}', {
-                                wsHost: location.host,
+                                wsHost: location.hostname,
                                 wsPort: "8080",
                                 wssPort: "8080",
                                 enabledTransports: ['ws', 'flash']
                              });
 
                 var pusher_channels = {
-                    'project': pusher.subscribe('presence'),
+                    'project': pusher.subscribe('project'),
                 }
 
                 pusher_channels.project.bind('reload', function(data) {
                     console.log('triggered reload');
                     window.location.reload();
                 });
-                // pusher_channels.box.bind('reload', function(data) {
-                //   window.location.reload();
-                // });
-                // pusher_channels.box.bind('goto', function(data) {
-                //   handleChanges( data.pk );
-                // });
+
+                pusher_channels.project.bind('reload', function(data) {
+                    console.log('triggered goto: ' + data);
+                    handleChanges( data.pk );
+                });
+
+
             }
         };
 

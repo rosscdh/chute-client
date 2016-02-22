@@ -114,7 +114,7 @@ class BoxApiService(RssReaderMixin, object):
                 playlist.write(content)
             try:
                 pusher_service = PusherService()
-                pusher_service.send(channel='presence', event='reload')
+                pusher_service.send(channel='box', event='reload')
             except:
                 pass
 
@@ -149,7 +149,7 @@ class ProcessFeedMediaService(object):
 
     def delete_unused(self, current_files):
         current_files.append(os.path.join(settings.MEDIA_PATH, 'playlist.json'))  # append the playlist
-        remove_me_files = [ os.path.join(settings.MEDIA_PATH, f) for f in os.listdir(settings.MEDIA_PATH) if os.path.join(settings.MEDIA_PATH, f) not in current_files ]
+        remove_me_files = [os.path.join(settings.MEDIA_PATH, f) for f in os.listdir(settings.MEDIA_PATH) if os.path.join(settings.MEDIA_PATH, f) not in current_files]
         for f in remove_me_files:
             print('Removing file: %s' % f)
             os.remove(f)
@@ -216,7 +216,9 @@ class PusherService(object):
         self.client = Pusher(app_id=getattr(settings, 'PUSHER_APP_ID'),
                              key=getattr(settings, 'PUSHER_KEY'),
                              secret=getattr(settings, 'PUSHER_SECRET'),
-                             host=u'127.0.0.1', port=4567, ssl=False)
+                             host=getattr(settings, 'PUSHER_HOST', u'127.0.0.1'),
+                             port=getattr(settings, 'PUSHER_SEND_PORT', 4567),
+                             ssl=getattr(settings, 'PUSHER_SEND_USE_SSL', False),)
 
     def send(self, channel, event, **kwargs):
         return self.client.trigger(unicode(channel), unicode(event), kwargs)
