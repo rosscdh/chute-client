@@ -112,6 +112,9 @@ class RssReaderMixin(NewsArticleMixin, object):
 
         wordpress_feed = feedparser.parse(feed_url)
 
+        if wordpress_feed.get('bozo', None) in [1]:
+            raise Exception('No Url Could be decoded: {url}, check internet connection?'.format(url=feed_url))
+
         feed_title = htmlParser.unescape(unicode(wordpress_feed.feed.title))
         slug = slugify.slugify(feed_title.lower())
 
