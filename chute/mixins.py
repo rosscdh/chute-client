@@ -3,9 +3,13 @@ import config as settings
 
 from .article import Article, NewsArticleMixin
 
+import base64
+import cStringIO
+
 import HTMLParser
 import feedparser
 import slugify
+import qrcode
 import json
 import re
 
@@ -56,6 +60,31 @@ class RssReaderMixin(NewsArticleMixin, object):
         _article_store.parse()
 
         return _article_store
+
+    def get_link_qr_code(self, link):
+        qr = qrcode.QRCode(
+            version=1,
+            error_correction=qrcode.constants.ERROR_CORRECT_L,
+            box_size=2,
+            border=0,
+        )
+        qr.add_data(link)
+        #qr.make(fit=True)
+        qr.make()
+
+        img = qr.make_image()
+        buffer = cStringIO.StringIO()
+        img.save(buffer)
+        return 'data:image/png;base64,%s' % base64.b64encode(buffer.getvalue())
+
+    def get_links(self, article):
+        links = []
+        for link in re.findall("http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+", article.html):
+            links.append({
+                'qr': self.get_link_qr_code(link=link),
+                'link': link
+            })
+        return links
 
     def get_template_from_tags(self, tags):
         template = None
@@ -169,6 +198,7 @@ class RssReaderMixin(NewsArticleMixin, object):
                 "provider_crc": None,
                 "wait_for": self.get_waitfor_from_tags(tags=tags, item=item, summary_detail=summary_detail),
                 "template": None,
+                #"links": self.get_links(article=article),
                 "updated_time": item.published
             }
 

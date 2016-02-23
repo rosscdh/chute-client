@@ -23,6 +23,17 @@
         .border{
             border:solid #c00 1px;
         }
+        #links {
+            height:auto;
+            max-height:45%;
+            left:0px;
+            bottom:0px;
+            position:absolute;
+            width:100%;
+            z-index:1001;
+        }
+        #links img.qr-code {
+        }
         #content-markup {
             height:auto;
             max-height:45%;
@@ -30,7 +41,7 @@
             bottom:0px;
             position:absolute;
             width:100%;
-            z-index:1000;
+            z-index:999;
 
             background:white;
             background-color:rgba(255, 255, 255, 1);
@@ -53,6 +64,12 @@
         #content-markup .message {
             font-size:0.9em;
             padding:10px;
+        }
+        div#weather {
+            width:25%;
+        }
+        #weather h2 .weather-time{
+            width:35%;
         }
 
     </style>
@@ -91,6 +108,13 @@
     </script>
 
     <script id="tpl-layout-basic" type="text/x-handlebars-template">
+        {{# if object.links }}
+        <div id="links">
+            {{#object.links}}
+            <img src="{{ qr }}" class="qr-code img img-responsive" />
+            {{/object.links}}
+        </div>
+        {{/if}}
         {{# if object.name }}
         {{# if object.message }}
         <div id="content-markup">
@@ -112,6 +136,11 @@
     </script>
 
     <script id="tpl-layout-image" type="text/x-handlebars-template">
+        <div id="links">
+            {{#object.links}}
+            <img src="{{ qr }}" class="qr-code img img-responsive" />
+            {{/object.links}}
+        </div>
         <div id="content-markup">
             <h1>{{ object.name }}<br/><small>{{ object.description }}</small></h1>
             <p>{{ object.message }}</p>
@@ -137,7 +166,6 @@
 
     <script>
     'use strict';
-
     $(document).ready(function( ) {
         var listen_to_pusher = function ( current_item, settings ) {
             if ( settings.project !== null ) {
