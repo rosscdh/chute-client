@@ -65,6 +65,15 @@ class RssReaderMixin(NewsArticleMixin, object):
                 break
         return template if template else 'basic'
 
+    def get_waitfor_from_tags(self, tags, item, summary_detail):
+        seconds = None
+        for tag in tags:
+            if 'waitfor-' in tag:
+                seconds = tag.split('waitfor-')[1]
+                break
+
+        return seconds if seconds else self.calculate_wait_for(corpus='%s %s' % (item.title, summary_detail))
+
     def extract_timing(self, text):
         # Extract Seconds
         res = re.search("\#(?P<time_length>\d+)(?P<time_type>(?:s|m|h))", text)
