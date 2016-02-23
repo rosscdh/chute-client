@@ -65,6 +65,41 @@ class RssReaderMixin(NewsArticleMixin, object):
                 break
         return template if template else 'basic'
 
+    def extract_timing(self, text):
+        # Extract Seconds
+        res = re.search("\#(?P<time_length>\d+)(?P<time_type>(?:s|m|h))", text)
+        seconds = None
+        if res:
+            time_length = res.group('time_length')
+            time_type = res.group('time_type')
+            seconds = 30
+            if time_type == 's':
+                seconds = time_length
+            elif time_type == 'm':
+                seconds = time_length/60
+            elif time_type == 'h':
+                seconds = time_length/3600
+            else:
+                raise Exception('Not a valid Time type must be #{time_length}s or #{time_length}m or #{time_length}h'.format(time_length=time_length))
+            # remove from title
+            return text.replace('#{seconds}{time_type}'.format(seconds=seconds, time_type=time_type), '')
+        return text, seconds
+
+    def get_title(self, text):
+        text, seconds = self.extract_timing(text=text)
+        return text, seconds
+
+    def get_video(self, article, item):
+        try:
+            video = article.movies[0]
+        except:
+            videos = [video for video in re.findall("https?://(?:[a-z0-9\-]+\.)+[a-z0-9]{2,6}(?:/[^/#?]+)+\.(?:m4v|mp4|mov|avi)", item.content[0].value)]
+            try:
+                video = videos[0]
+            except:
+                video = None
+        return video
+
     def get_rss_from_wordpress(self, **kwargs):
         category = kwargs.get('category', getattr(settings, 'WORDPRESS_RSS_CATEGORY', None))
         number_of_items = kwargs.get('number_of_items', getattr(settings, 'WORDPRESS_RSS_NUM_ITEMS', 100))
@@ -77,12 +112,12 @@ class RssReaderMixin(NewsArticleMixin, object):
 
         wordpress_feed = feedparser.parse(feed_url)
 
-        title = unicode(wordpress_feed.feed.title)
-        slug = slugify.slugify(title.lower())
+        feed_title = htmlParser.unescape(unicode(wordpress_feed.feed.title))
+        slug = slugify.slugify(feed_title.lower())
 
         project = {
             "slug": slug,
-            "name": title,
+            "name": feed_title,
             "url": wordpress_feed.feed.title_detail.base,
             "is_facebook_feed": False,
             "detail_url": wordpress_feed.feed.link,
@@ -98,7 +133,6 @@ class RssReaderMixin(NewsArticleMixin, object):
         short_codes = '(\!)?\[(.*?)\]\((.*?)\)'
 
         for item in wordpress_feed.entries[:number_of_items]:
-            #article = self.article(content=unicode(item.summary_detail.value))
             article = self.article(content=unicode(item.content[0].value))
 
             tags = [t.get('term') for t in item.tags]
@@ -109,40 +143,19 @@ class RssReaderMixin(NewsArticleMixin, object):
             summary_detail = self.html_to_markdown(content=unicode(item.summary_detail.value))
             summary_detail = re.sub(short_codes, '', summary_detail).strip()
 
-            title = htmlParser.unescape(unicode(item.title))
-
-            # Extract Seconds
-            # Turn into method
-            res = re.search("\#(?P<time_length>\d+)(?P<time_type>(?:s|m|h))", title)
-            seconds = None
-            if res:
-                time_length = res.group('time_length')
-                time_type = res.group('time_type')
-                seconds = 30
-                if time_type == 's':
-                    seconds = time_length
-                elif time_type == 'm':
-                    seconds = time_length/60
-                elif time_type == 'h':
-                    seconds = time_length/3600
-                else:
-                    raise Exception('Not a valid Time type must be #{time_length}s or #{time_length}m or #{time_length}h'.format(time_length=time_length))
-                # remove from title
-                title = title.replace('#{time_length}{time_type}'.format(time_length=time_length, time_type=time_type), '')
+            title, seconds = self.get_title(text=htmlParser.unescape(unicode(wordpress_feed.feed.title)))
 
             try:
                 image = article.images[0]
             except:
                 image = None
 
-            try:
-                video = article.movies[0]
-            except:
-                videos = [video for video in re.findall("https?://(?:[a-z0-9\-]+\.)+[a-z0-9]{2,6}(?:/[^/#?]+)+\.(?:m4v|mp4)", item.content[0].value)]
-                try:
-                    video = videos[0]
-                except:
-                    video = None
+            video = self.get_video(article=article,
+                                   item=item)
+            if video:
+                # If we have a video then its going to be fullscreen no matter what
+                title = None
+                summary = None
 
             try:
                 rss_item = {
@@ -168,6 +181,7 @@ class RssReaderMixin(NewsArticleMixin, object):
                 feed.append(rss_item)
             except AttributeError:
                 pass
+
         return json.dumps({
             "pk": None,
             "project": project,
