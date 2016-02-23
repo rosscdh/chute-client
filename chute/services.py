@@ -154,6 +154,7 @@ class ProcessFeedMediaService(object):
             print('Removing file: %s' % f)
             os.remove(f)
 
+    #@threads(2)
     def process(self):
         """
         download media extracted from the feed

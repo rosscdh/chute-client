@@ -68,35 +68,13 @@ class RssReaderMixin(NewsArticleMixin, object):
     def get_waitfor_from_tags(self, tags, item, summary_detail):
         seconds = None
         for tag in tags:
-            if 'waitfor-' in tag:
-                seconds = tag.split('waitfor-')[1]
+            res = re.search("(?P<time_length>\d+)(?P<time_type>(?:s))", tag)
+            if res:
+                seconds = res.group('time_length')
+                time_type = res.group('time_type')
                 break
 
         return seconds if seconds else self.calculate_wait_for(corpus='%s %s' % (item.title, summary_detail))
-
-    def extract_timing(self, text):
-        # Extract Seconds
-        res = re.search("\#(?P<time_length>\d+)(?P<time_type>(?:s|m|h))", text)
-        seconds = None
-        if res:
-            time_length = res.group('time_length')
-            time_type = res.group('time_type')
-            seconds = 30
-            if time_type == 's':
-                seconds = time_length
-            elif time_type == 'm':
-                seconds = time_length/60
-            elif time_type == 'h':
-                seconds = time_length/3600
-            else:
-                raise Exception('Not a valid Time type must be #{time_length}s or #{time_length}m or #{time_length}h'.format(time_length=time_length))
-            # remove from title
-            return text.replace('#{seconds}{time_type}'.format(seconds=seconds, time_type=time_type), '')
-        return text, seconds
-
-    def get_title(self, text):
-        text, seconds = self.extract_timing(text=text)
-        return text, seconds
 
     def get_video(self, article, item):
         try:
@@ -155,7 +133,8 @@ class RssReaderMixin(NewsArticleMixin, object):
             summary_detail = self.html_to_markdown(content=unicode(item.summary_detail.value))
             summary_detail = re.sub(short_codes, '', summary_detail).strip()
 
-            title, seconds = self.get_title(text=htmlParser.unescape(unicode(wordpress_feed.feed.title)))
+            title = htmlParser.unescape(unicode(wordpress_feed.feed.title))
+            slug = slugify.slugify(title.lower())
 
             try:
                 image = article.images[0]
@@ -169,30 +148,32 @@ class RssReaderMixin(NewsArticleMixin, object):
                 title = None
                 summary = None
 
-            try:
-                rss_item = {
-                    "pk": item.id,
-                    "name": title,
-                    "message": summary_detail,
-                    "description": summary if summary != summary_detail else None,
-                    "picture": image,
-                    "video": video,
-                    "video_transcode_status": None,
-                    "updated_at": item.published,
-                    "absolute_url": item.link,
-                    "template_name": self.get_template_from_tags(tags=tags),
-                    "post_type": "link",
-                    "url": item.link,
-                    "slug": slugify.slugify(title.lower()),
-                    "provider_crc": None,
-                    "wait_for": seconds if seconds else self.calculate_wait_for(corpus='%s %s' % (item.title, summary_detail)),
-                    "template": None,
-                    "updated_time": item.published
-                }
+            if 'fullscreen' in tags:
+                title = None
+                summary = None
 
-                feed.append(rss_item)
-            except AttributeError:
-                pass
+            rss_item = {
+                "pk": item.id,
+                "name": title,
+                "message": summary_detail,
+                "description": summary if summary != summary_detail else None,
+                "picture": image,
+                "video": video,
+                "video_transcode_status": None,
+                "updated_at": item.published,
+                "absolute_url": item.link,
+                "template_name": self.get_template_from_tags(tags=tags),
+                "post_type": "link",
+                "url": item.link,
+                "slug": slug,
+                "provider_crc": None,
+                "wait_for": self.get_waitfor_from_tags(tags=tags, item=item, summary_detail=summary_detail),
+                "template": None,
+                "updated_time": item.published
+            }
+
+            feed.append(rss_item)
+
 
         return json.dumps({
             "pk": None,
