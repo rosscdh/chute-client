@@ -162,7 +162,7 @@ class RssReaderMixin(NewsArticleMixin, object):
             summary_detail = self.html_to_markdown(content=unicode(item.summary_detail.value))
             summary_detail = re.sub(short_codes, '', summary_detail).strip()
 
-            title = htmlParser.unescape(unicode(wordpress_feed.feed.title))
+            title = htmlParser.unescape(unicode(item.title))
             slug = slugify.slugify(title.lower())
 
             try:

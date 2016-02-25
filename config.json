@@ -1,6 +1,6 @@
 {
   "unit": "c",
   "location": "Sydney, Australia",
-  "wordpress_url": "http://digitalhardcore.de/feed",
+  "wordpress_url": "http://192.168.33.11/feed/",
   "DEBUG": false
 }

@@ -20,7 +20,7 @@ class SendEvent(Command):
         try:
             data = json.loads(data)
         except Exception as e:
-            data = {'error': {'message': e}}
+            data = {}
         print data
         s = PusherService()
         resp = s.send(channel=channel, event=event, **data)
